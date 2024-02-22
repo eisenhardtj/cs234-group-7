@@ -8,7 +8,7 @@ public class BasketballRosterFrame extends JFrame {
 
     public BasketballRosterFrame() {
         setTitle("Basketball Roster");
-        setSize(400, 300);
+        setSize(getMaximumSize());
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         roster = new Roster();
