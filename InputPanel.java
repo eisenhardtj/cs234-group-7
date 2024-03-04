@@ -53,7 +53,7 @@ public class InputPanel extends JPanel implements ActionListener {
             roster.addPlayer(player);
         } else if (e.getActionCommand().equals("Remove Player")) {
             String name = nameField.getText();
-            
+            roster.removePlayer(name);
             // Implement removing player functionality
             // You can use roster.removePlayer(index) method
         }
