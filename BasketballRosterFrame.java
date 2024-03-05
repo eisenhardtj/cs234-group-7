@@ -6,6 +6,9 @@ import java.awt.event.ActionListener;
 public class BasketballRosterFrame extends JFrame {
     private Roster roster;
 
+    /**
+     * Creates a JFrame that a InputPanel, JTextArea, and JscrollArea is then added to.
+     */
     public BasketballRosterFrame() {
         setTitle("Basketball Roster");
         setSize(getMaximumSize());

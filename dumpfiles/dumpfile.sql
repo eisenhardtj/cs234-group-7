@@ -54,7 +54,7 @@ CREATE TABLE `TeamRoster` (
   `player_number` int DEFAULT NULL,
   `position` varchar(100) DEFAULT NULL,
   `expected_graduation_date` int DEFAULT NULL,
-  `height` decimal(5,2) DEFAULT NULL,
+  `height` varchar(20) DEFAULT NULL,
   `weight` decimal(5,2) DEFAULT NULL,
   PRIMARY KEY (`player_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

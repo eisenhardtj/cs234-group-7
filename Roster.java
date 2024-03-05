@@ -9,6 +9,11 @@ public class Roster {
     private ArrayList<BasketballPlayer> players = new ArrayList<>();
     private Connection connection;
 
+    /**
+     * When a instance of the class is created a connection between the database and the program,
+     * using the credentials: "project" for username and "project" for the password trying to connect
+     * to the database: "MoravianWomensTeam24" from the machine the program is being run on.
+     */
     public Roster()
     {
         try
@@ -25,6 +30,11 @@ public class Roster {
         }
     }
 
+    /**
+     * Uses the getters in the BasketballPlayer taken as a parameter, and the sql connection
+     * to insert the player into the MoravianWomensTeam24 database.
+     * @param player
+     */
     public void addPlayer(BasketballPlayer player) {
         try {
             String sql = "INSERT INTO TeamRoster (player_name, player_number, position, expected_graduation_date, height, weight) VALUES (?, ?, ?, ?, ?, ?)";
@@ -34,18 +44,23 @@ public class Roster {
             addStatement.setInt(2, player.getNumber());
             addStatement.setString(3, player.getPosition());
             addStatement.setInt(4, player.getExpectedGraduationDate());
-            addStatement.setDouble(5, player.getHeight());
+            addStatement.setString(5, player.getHeight());
             addStatement.setDouble(6, player.getWeight());
 
             addStatement.executeUpdate();
             
             addStatement.close();
             players.add(player);
+            displayRoster();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * takes the player's name as a parameter and deletes that player from the database.
+     * @param playerName
+     */
     public void removePlayer(String playerName) {
         PreparedStatement removeQuery;
         try {
@@ -66,6 +81,7 @@ public class Roster {
         }
     }
     
+
     public String displayRoster() {
         StringBuilder roster = new StringBuilder();
         for (BasketballPlayer player : players) {

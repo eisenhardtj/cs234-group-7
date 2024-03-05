@@ -7,6 +7,10 @@ public class InputPanel extends JPanel implements ActionListener {
     private Roster roster;
     private JTextField nameField, numberField, positionField, gradField, heightField, weightField;
 
+    /**
+     * Series of input text fields that are added to the GUI that are used to take a input and create 
+     * or remove a player from the Moravianwomensteam24 database.
+     */
     public InputPanel(Roster roster) {
         this.roster = roster;
 
@@ -24,12 +28,13 @@ public class InputPanel extends JPanel implements ActionListener {
         add(new JLabel("Expected graduation date:"));
         add(gradField);
         heightField = new JTextField();
-        add(new JLabel("Height:"));
+        add(new JLabel("Height in feet:"));
         add(heightField);
         weightField = new JTextField();
         add(new JLabel("Weight:"));
         add(weightField);
 
+        //add and remove player buttons.
         JButton addButton = new JButton("Add Player");
         addButton.addActionListener(this);
         add(addButton);
@@ -39,6 +44,11 @@ public class InputPanel extends JPanel implements ActionListener {
         add(removeButton);
     }
 
+    /**
+     * Action listener that is executed when the add or remove player buttons are pushed,
+     * when pushed the buttons grab parameters from the text fields and pass them to the
+     * corresponding function in the Roster.java file.
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("Add Player")) {
@@ -46,7 +56,7 @@ public class InputPanel extends JPanel implements ActionListener {
             int number = Integer.parseInt(numberField.getText());
             String position = positionField.getText();
             int year = Integer.parseInt(gradField.getText());
-            Double height = Double.parseDouble(heightField.getText());
+            String height = heightField.getText();
             int weight = Integer.parseInt(weightField.getText());
 
             BasketballPlayer player = new BasketballPlayer(name, number, position, year, height, weight);
@@ -54,9 +64,6 @@ public class InputPanel extends JPanel implements ActionListener {
         } else if (e.getActionCommand().equals("Remove Player")) {
             String name = nameField.getText();
             roster.removePlayer(name);
-            // Implement removing player functionality
-            // You can use roster.removePlayer(index) method
         }
     }
 }
-

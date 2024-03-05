@@ -3,10 +3,10 @@ public class BasketballPlayer {
     private int number;
     private String position;
     private int expectedGraduationDate;
-    private double height;
+    private String height;
     private double weight;
 
-    public BasketballPlayer(String name, int number, String position, int expectedGraduationDate, double height, double weight) {
+    public BasketballPlayer(String name, int number, String position, int expectedGraduationDate, String height, double weight) {
         this.name = name;
         this.number = number;
         this.position = position;
@@ -31,7 +31,7 @@ public class BasketballPlayer {
         return expectedGraduationDate;
     }
 
-    public double getHeight() {
+    public String getHeight() {
         return height;
     }
 

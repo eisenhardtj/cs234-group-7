@@ -5,9 +5,9 @@ import java.sql.SQLException;
 public class MySQLConnection {
     public static void main(String[] args) {
 
-        String url = "jdbc:mysql://localhost:3306/MoravianWomensTeam24"; // Replace "mydatabase" with your database name
-        String user = "project"; // Your database username
-        String password = "project"; // Your database password
+        String url = "jdbc:mysql://localhost:3306/MoravianWomensTeam24";
+        String user = "project";
+        String password = "project";
 
         try {
             // Load the MySQL JDBC driver
