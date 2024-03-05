@@ -1,3 +1,12 @@
+/**
+ * Uses a MySQL driver and library to establish a connection between the database and the app.
+ * 
+ * Authors: 
+ * Jeffery Eisenhardt - eisenhardtj
+ * Christine Colvin - christinecolvin
+ * Cole Aydelotte - coleaydelotte
+ * Jalil Rodriguez - JalilR08
+ */
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;

@@ -1,3 +1,12 @@
+/**
+ * BasketballPlayer with the private variables: name, number, position, expectedGradutationDate, height, and weight.
+ * 
+ * Authors: 
+ * Jeffery Eisenhardt - eisenhardtj
+ * Christine Colvin - christinecolvin
+ * Cole Aydelotte - coleaydelotte
+ * Jalil Rodriguez - JalilR08
+ */
 public class BasketballPlayer {
     private String name;
     private int number;

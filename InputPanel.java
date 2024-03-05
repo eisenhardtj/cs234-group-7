@@ -1,3 +1,12 @@
+/**
+ * JPanel that contains a series of input fields that are used to add or remove players from the database.
+ * 
+ * Authors: 
+ * Jeffery Eisenhardt - eisenhardtj
+ * Christine Colvin - christinecolvin
+ * Cole Aydelotte - coleaydelotte
+ * Jalil Rodriguez - JalilR08
+ */
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;

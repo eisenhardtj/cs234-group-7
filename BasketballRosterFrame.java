@@ -1,3 +1,12 @@
+/**
+ * Creates a JFrame that an InputPanel, JTextArea, and JScrollPane are then added to.
+ * 
+ * Authors: 
+ * Jeffery Eisenhardt - eisenhardtj
+ * Christine Colvin - christinecolvin
+ * Cole Aydelotte - coleaydelotte
+ * Jalil Rodriguez - JalilR08
+ */
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -6,9 +15,6 @@ import java.awt.event.ActionListener;
 public class BasketballRosterFrame extends JFrame {
     private Roster roster;
 
-    /**
-     * Creates a JFrame that a InputPanel, JTextArea, and JscrollArea is then added to.
-     */
     public BasketballRosterFrame() {
         setTitle("Basketball Roster");
         setSize(getMaximumSize());

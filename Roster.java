@@ -1,8 +1,17 @@
+/**
+ * A class that has a connection and ArrayList as class variables, has a constructor that creates a 
+ * connection to the database then has several functions that modify the database's contents.
+ * 
+ * Authors: 
+ * Jeffery Eisenhardt - eisenhardtj
+ * Christine Colvin - christinecolvin
+ * Cole Aydelotte - coleaydelotte
+ * Jalil Rodriguez - JalilR08
+ */
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-
 import java.util.ArrayList;
 
 public class Roster {
@@ -10,9 +19,9 @@ public class Roster {
     private Connection connection;
 
     /**
-     * When a instance of the class is created a connection between the database and the program,
-     * using the credentials: "project" for username and "project" for the password trying to connect
-     * to the database: "MoravianWomensTeam24" from the machine the program is being run on.
+     * When an instance of the class is created, a connection is established between the program and the database.
+     * The connection uses the credentials "project" for the username and "project" for the password, attempting
+     * to connect to the database "MoravianWomensTeam24" from the machine where the program is being run.
      */
     public Roster()
     {
@@ -51,7 +60,6 @@ public class Roster {
             
             addStatement.close();
             players.add(player);
-            displayRoster();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -81,7 +89,10 @@ public class Roster {
         }
     }
     
-
+    /**
+     * Uses a for loop to append to a string named roster then prints it out.
+     * @return
+     */
     public String displayRoster() {
         StringBuilder roster = new StringBuilder();
         for (BasketballPlayer player : players) {
