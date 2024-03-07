@@ -21,9 +21,9 @@ public class BasketballTeamRosterGUI extends JFrame {
         players = new ArrayList<>();
         listModel = new DefaultListModel<>();
         playerList = new JList<>(listModel);
-        playerNameField = new JTextField(20);
-        positionField = new JTextField(10);
-        playerNumberField = new JTextField(5);
+        playerNameField = new JTextField(15);
+        positionField = new JTextField(15);
+        playerNumberField = new JTextField(8);
         graduationYearField = new JTextField(5);
         addButton = new JButton("Add Player"); // Initialized the button to add player
         removeButton = new JButton("Remove Player"); // Initialized the button to remove player
@@ -133,6 +133,12 @@ public class BasketballTeamRosterGUI extends JFrame {
         setSize(getMaximumSize());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
+    }
+
+    private JTextField createTextField(int columns) {
+        JTextField textField = new JTextField(columns);
+        textField.setPreferredSize(new Dimension(textField.getPreferredSize().width, 10)); // Set preferred height
+        return textField;
     }
 
     private void clearFields() {
