@@ -2,172 +2,210 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class BasketballTeamRosterGUI extends JFrame {
-    private DefaultListModel<String> rosterListModel;
-    private JList<String> rosterList;
+
+    private ArrayList<Player> players;
+    private DefaultListModel<Player> listModel;
+    private JList<Player> playerList;
+    private JTextField playerNameField, positionField, playerNumberField, graduationYearField;
+    JButton increaseFontSizeButton;
+    JButton decreaseFontSizeButton;
+    private JButton addButton, removeButton, editButton;
+    private Player selectedPlayer;
+    private Font defaultFont; // Added default font to store original font
 
     public BasketballTeamRosterGUI() {
-        setTitle("Basketball Team Roster");
-        setSize(getMaximumSize());
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        super("Basketball Team Roster");
+        players = new ArrayList<>();
+        listModel = new DefaultListModel<>();
+        playerList = new JList<>(listModel);
+        playerNameField = new JTextField(20);
+        positionField = new JTextField(10);
+        playerNumberField = new JTextField(5);
+        graduationYearField = new JTextField(5);
+        addButton = new JButton("Add Player"); // Initialized the button to add player
+        removeButton = new JButton("Remove Player"); // Initialized the button to remove player
+        editButton = new JButton("Edit Player"); // Initialized the button to edit player
+        increaseFontSizeButton = new JButton("Increase Font Size"); // Initialized the button
+        decreaseFontSizeButton = new JButton("Decrease Font Size"); // Initialized the button
+        defaultFont = playerNameField.getFont(); // Storing the default font
 
-        JPanel mainPanel = new JPanel(new BorderLayout());
-        JPanel inputPanel = new JPanel(new GridLayout(5, 2));
-        JPanel buttonPanel = new JPanel(new FlowLayout());
+        // Action listener for the add, remove, edit, increase font size and decrease font size buttons
 
-        JLabel nameLabel = new JLabel("Name:");
-        JLabel playerNumberLabel = new JLabel("Player Number:");
-        JLabel positionLabel = new JLabel("Position:");
-        JLabel gradYearLabel = new JLabel("Graduation Year:");
-
-        JTextField nameField = new JTextField();
-        JTextField playerNumberField = new JTextField();
-        JTextField positionField = new JTextField();
-        JTextField gradYearField = new JTextField();
-
-        JButton addButton = new JButton("Add Player");
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                addPlayer(nameField.getText(), playerNumberField.getText(), positionField.getText(), gradYearField.getText());
+                String playerName = playerNameField.getText();
+                String position = positionField.getText();
+                int playerNumber = Integer.parseInt(playerNumberField.getText());
+                int graduationYear = Integer.parseInt(graduationYearField.getText());
+                Player player = new Player(playerName, position, playerNumber, graduationYear);
+                players.add(player);
+                listModel.addElement(player);
+                clearFields();
             }
         });
 
-        JButton removeButton = new JButton("Remove Player");
         removeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                removePlayer();
+                int selectedIndex = playerList.getSelectedIndex();
+                if (selectedIndex != -1) {
+                    players.remove(selectedIndex);
+                    listModel.remove(selectedIndex);
+                    clearFields();
+                }
             }
         });
 
-        JButton editButton = new JButton("Edit Player");
         editButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                editPlayer();
+                if (selectedPlayer != null) {
+                    selectedPlayer.setName(playerNameField.getText());
+                    selectedPlayer.setPosition(positionField.getText());
+                    selectedPlayer.setPlayerNumber(Integer.parseInt(playerNumberField.getText()));
+                    selectedPlayer.setGraduationYear(Integer.parseInt(graduationYearField.getText()));
+                    listModel.set(playerList.getSelectedIndex(), selectedPlayer);
+                }
+                clearFields();
             }
         });
 
-        JButton statsButton = new JButton("Player Stats");
-        statsButton.addActionListener(new ActionListener() {
+        increaseFontSizeButton.addActionListener(new ActionListener() { 
             @Override
             public void actionPerformed(ActionEvent e) {
-                openPlayerStatsFrame();
+                Font currentFont = playerNameField.getFont();
+                Font newFont = currentFont.deriveFont(currentFont.getSize() + 2f);
+                setFontSize(newFont);
             }
         });
 
-        rosterListModel = new DefaultListModel<>();
-        rosterList = new JList<>(rosterListModel);
-        JScrollPane scrollPane = new JScrollPane(rosterList);
+        decreaseFontSizeButton.addActionListener(new ActionListener() { 
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Font currentFont = playerNameField.getFont();
+                Font newFont = currentFont.deriveFont(currentFont.getSize() - 2f);
+                setFontSize(newFont);
+            }
+        });
 
-        inputPanel.add(nameLabel);
-        inputPanel.add(nameField);
-        inputPanel.add(playerNumberLabel);
-        inputPanel.add(playerNumberField);
-        inputPanel.add(positionLabel);
+
+        playerList.addListSelectionListener(e -> {
+            selectedPlayer = playerList.getSelectedValue();
+            if (selectedPlayer != null) {
+                playerNameField.setText(selectedPlayer.getName());
+                positionField.setText(selectedPlayer.getPosition());
+                playerNumberField.setText(String.valueOf(selectedPlayer.getPlayerNumber()));
+                graduationYearField.setText(String.valueOf(selectedPlayer.getGraduationYear()));
+            }
+        });
+
+        JPanel inputPanel = new JPanel(new GridLayout(5, 2));
+        inputPanel.add(new JLabel("Player Name:"));
+        inputPanel.add(playerNameField);
+        inputPanel.add(new JLabel("Position:"));
         inputPanel.add(positionField);
-        inputPanel.add(gradYearLabel);
-        inputPanel.add(gradYearField);
+        inputPanel.add(new JLabel("Player Number:"));
+        inputPanel.add(playerNumberField);
+        inputPanel.add(new JLabel("Graduation Year:"));
+        inputPanel.add(graduationYearField);
+        
 
-        buttonPanel.add(addButton);
-        buttonPanel.add(removeButton);
-        buttonPanel.add(editButton);
-        buttonPanel.add(statsButton);
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        buttonPanel.add(addButton); // Added button to add player
+        buttonPanel.add(removeButton); // Added button to remove player
+        buttonPanel.add(editButton); // Added button to edit player
+        buttonPanel.add(increaseFontSizeButton); // Added button to increase font size
+        buttonPanel.add(decreaseFontSizeButton); // Added button to decrease font size
 
-        mainPanel.add(inputPanel, BorderLayout.NORTH);
-        mainPanel.add(scrollPane, BorderLayout.CENTER);
+        JScrollPane scrollPane = new JScrollPane(playerList);
+
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.add(inputPanel, BorderLayout.WEST);
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
 
-        add(mainPanel);
+        getContentPane().add(mainPanel);
+
+        setSize(getMaximumSize());
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setVisible(true);
     }
 
-    private void addPlayer(String name, String playerNumber, String position, String gradYear) {
-        if (!name.isEmpty() && !playerNumber.isEmpty() && !position.isEmpty() && !gradYear.isEmpty()) {
-            String playerInfo = String.format("Name: %s, Player Number: %s, Position: %s, Graduation Year: %s",
-                    name, playerNumber, position, gradYear);
-            rosterListModel.addElement(playerInfo);
-        } else {
-            JOptionPane.showMessageDialog(this, "Please fill in all fields", "Error", JOptionPane.ERROR_MESSAGE);
-        }
+    private void clearFields() {
+        playerNameField.setText("");
+        positionField.setText("");
+        playerNumberField.setText("");
+        graduationYearField.setText("");
     }
-
-    private void removePlayer() {
-        int selectedIndex = rosterList.getSelectedIndex();
-        if (selectedIndex != -1) {
-            rosterListModel.remove(selectedIndex);
-        } else {
-            JOptionPane.showMessageDialog(this, "Please select a player to remove", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    private void editPlayer() {
-        // Implement editPlayer method as needed
-    }
-
-    private void openPlayerStatsFrame() {
-        PlayerStatsFrame statsFrame = new PlayerStatsFrame();
-        statsFrame.setVisible(true);
+    private void setFontSize(Font font) { // Method to set font size
+        playerNameField.setFont(font);
+        positionField.setFont(font);
+        playerNumberField.setFont(font);
+        graduationYearField.setFont(font);
+        playerList.setFont(font);
     }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new BasketballTeamRosterGUI().setVisible(true);
+                new BasketballTeamRosterGUI();
             }
         });
     }
-}
 
-class PlayerStatsFrame extends JFrame {
-    private JTextField attemptedField, madeField, percentageField;
+    private static class Player {
+        private String name;
+        private String position;
+        private int playerNumber;
+        private int graduationYear;
 
-    public PlayerStatsFrame() {
-        setTitle("Player Stats");
-        setSize(300, 200);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        public Player(String name, String position, int playerNumber, int graduationYear) {
+            this.name = name;
+            this.position = position;
+            this.playerNumber = playerNumber;
+            this.graduationYear = graduationYear;
+        }
 
-        JPanel panel = new JPanel(new GridLayout(3, 2));
+        public String getName() {
+            return name;
+        }
 
-        JLabel attemptedLabel = new JLabel("3 Points Attempted:");
-        JLabel madeLabel = new JLabel("3 Points Made:");
-        JLabel percentageLabel = new JLabel("Percentage:");
+        public void setName(String name) {
+            this.name = name;
+        }
 
-        attemptedField = new JTextField();
-        madeField = new JTextField();
-        percentageField = new JTextField();
-        percentageField.setEditable(false);
+        public String getPosition() {
+            return position;
+        }
 
-        JButton calculateButton = new JButton("Calculate");
-        calculateButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                calculatePercentage();
-            }
-        });
+        public void setPosition(String position) {
+            this.position = position;
+        }
 
-        panel.add(attemptedLabel);
-        panel.add(attemptedField);
-        panel.add(madeLabel);
-        panel.add(madeField);
-        panel.add(percentageLabel);
-        panel.add(percentageField);
-        panel.add(new JLabel());
-        panel.add(calculateButton);
+        public int getPlayerNumber() {
+            return playerNumber;
+        }
 
-        add(panel);
-    }
+        public void setPlayerNumber(int playerNumber) {
+            this.playerNumber = playerNumber;
+        }
 
-    private void calculatePercentage() {
-        try {
-            int attempted = Integer.parseInt(attemptedField.getText());
-            int made = Integer.parseInt(madeField.getText());
-            double percentage = (double) made / attempted * 100;
-            percentageField.setText(String.format("%.2f%%", percentage));
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Please enter valid numbers", "Error", JOptionPane.ERROR_MESSAGE);
+        public int getGraduationYear() {
+            return graduationYear;
+        }
+
+        public void setGraduationYear(int graduationYear) {
+            this.graduationYear = graduationYear;
+        }
+
+        @Override
+        public String toString() {
+            return name + " | Position: " + position + " | Player Number: " + playerNumber + " | Graduation Year: " + graduationYear;
         }
     }
 }
