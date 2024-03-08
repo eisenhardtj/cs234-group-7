@@ -1,5 +1,5 @@
 /**
- * Uses a MySQL driver and library to establish a connection between the database and the app.
+ * Test program currently being used to check backend functionality.
  * 
  * Authors: 
  * Jeffery Eisenhardt - eisenhardtj
@@ -11,6 +11,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Scanner;
+
 import java.sql.ResultSet;
 
 public class MySQLConnection {
@@ -21,70 +23,235 @@ public class MySQLConnection {
         String user = "project";
         String password = "project";
         Connection connection = null;
-        ResultSet results = null;
-        try
-        {
-            connection = DriverManager.getConnection(url, user, password);
+        ResultSet resultsAdd = null, resultsRemove = null;
+        Scanner in = new Scanner(System.in);
+        String idField = "", firstNameField = "", lastNameField = "", playerNumberField = "", positionField = "", expectedGraduationDateField = "";
+        Boolean yorn;
+        String fN, lN, ps, first, last;
+        int pN, gY;
 
-            if (connection != null) 
-            {
-                System.out.println("Successfully connected to the MySQL database.");
-                
-                String sql = "SELECT * FROM teamroster;";
-                q = connection.prepareStatement(sql);
-                results = q.executeQuery();
-                while(results.next())
-                {
-                    String field = results.getString("player_id");
-                    System.out.println(field);
-                    field = results.getString("player_name");
-                    System.out.println(field);
-                    field = results.getString("player_number");
-                    System.out.println(field);
-                    field = results.getString("position");
-                    System.out.println(field);
-                    field = results.getString("expected_graduation_date");
-                    System.out.println(field);
-                }
-            }
-        }
-        // CREATE TABLE `TeamRoster` (
-        // `player_id` int NOT NULL AUTO_INCREMENT,
-        // `player_name` varchar(100) DEFAULT NULL,
-        // `player_number` int DEFAULT NULL,
-        // `position` varchar(100) DEFAULT NULL,
-        // `expected_graduation_date` int DEFAULT NULL,
-        // `height` varchar(20) DEFAULT NULL,
-        // `weight` decimal(5,2) DEFAULT NULL,
-        // PRIMARY KEY (`player_id`)
-        catch (SQLException e) 
+        SQLConnection conn = new SQLConnection();
+
+        System.out.print("Do you want to add players? (True or False Case sensitive) ");
+        yorn = in.nextBoolean();
+
+        if(yorn)
         {
-            System.out.println("Error connecting to the database.");
-            e.printStackTrace();
-        }
-        finally
-        {
+            System.out.print("First: ");
+            fN = in.next();
+            System.out.print("Last: ");
+            lN = in.next();
+            System.out.print("Player number: ");
+            pN = in.nextInt();
+            System.out.print("Position: ");
+            ps = in.next();
+            System.out.print("Expected graduation year: ");
+            gY = in.nextInt();
+            //First name, Last name, Player number, Position, Graduation year
+            conn.addPlayer(fN, lN, pN, ps, gY);
+
             try
             {
-                if (q != null)
-                {
-                    q.close();
-                }
+                connection = DriverManager.getConnection(url, user, password);
 
-                if (connection != null)
+                if (connection != null) 
                 {
-                    connection.close();
-                }
-
-                if (results != null)
-                {
-                    results.close();
+                    System.out.println("Successfully connected to the MySQL database.");
+                    
+                    String sql = "SELECT * FROM teamroster;";
+                    q = connection.prepareStatement(sql);
+                    resultsAdd = q.executeQuery();
+                    System.out.println("+----+------------+-----------+---------------+----------+--------------------------+");
+                    System.out.println("| ID | First Name | Last Name | Player Number | Position | Expected Graduation Date |");
+                    System.out.println("+----+------------+-----------+---------------+----------+--------------------------+");
+                    while(resultsAdd.next())
+                    {
+                        idField = resultsAdd.getString("player_id");
+                        firstNameField = resultsAdd.getString("first_name");
+                        lastNameField = resultsAdd.getString("last_name");
+                        playerNumberField = resultsAdd.getString("player_number");
+                        positionField = resultsAdd.getString("position");
+                        expectedGraduationDateField = resultsAdd.getString("expected_graduation_date");
+                        System.out.println("| " + idField + " | " + firstNameField + " | " + lastNameField + " | " + playerNumberField + " | " + positionField + " | " + expectedGraduationDateField + " |");
+                    }
                 }
             }
-            catch (SQLException e)
+            catch (SQLException e) 
             {
-                System.out.println("Error closing connections.");
                 e.printStackTrace();
+                System.out.println("Error connecting to the database.");
+            }
+            finally
+            {
+                try
+                {
+                    if (q != null)
+                    {
+                        q.close();
+                    }
+
+                    if (connection != null)
+                    {
+                        connection.close();
+                    }
+
+                    if (resultsAdd != null)
+                    {
+                        resultsAdd.close();
+                    }
+                }
+                catch (SQLException e)
+                {
+                    e.printStackTrace();
+                    System.out.println("Error closing connections.");
+                }
+            }
+        }
+
+        System.out.print("Do you want to remove players? (True or False Case sensitive) ");
+        yorn = in.nextBoolean();
+
+        if(yorn)
+        {
+            System.out.print("First name to remove: ");
+            fN = in.next();
+            System.out.print("Last name to remove: ");
+            lN = in.next();
+
+            conn.removePlayer(fN, lN);
+
+            try
+            {
+                connection = DriverManager.getConnection(url, user, password);
+                if (connection != null) 
+                {
+                    System.out.println("Successfully connected to the MySQL database.");
+                    
+                    String sql = "SELECT * FROM teamroster;";
+                    q = connection.prepareStatement(sql);
+                    resultsRemove = q.executeQuery();
+                    System.out.println("+----+------------+-----------+---------------+----------+--------------------------+");
+                    System.out.println("| ID | First Name | Last Name | Player Number | Position | Expected Graduation Date |");
+                    System.out.println("+----+------------+-----------+---------------+----------+--------------------------+");
+                    while(resultsRemove.next())
+                    {
+                        idField = resultsRemove.getString("player_id");
+                        firstNameField = resultsRemove.getString("first_name");
+                        lastNameField = resultsRemove.getString("last_name");
+                        playerNumberField = resultsRemove.getString("player_number");
+                        positionField = resultsRemove.getString("position");
+                        expectedGraduationDateField = resultsRemove.getString("expected_graduation_date");
+                        System.out.println("| " + idField + " | " + firstNameField + " | " + lastNameField + " | " + playerNumberField + " | " + positionField + " | " + expectedGraduationDateField + " |");
+                    }
+                }
+            }
+            catch(SQLException e)
+            {
+                e.printStackTrace();
+                System.out.println("\nSQL Connection Error.");
+            }
+            finally
+            {
+                try
+                {
+                    if (q != null)
+                    {
+                        q.close();
+                    }
+
+                    if (connection != null)
+                    {
+                        connection.close();
+                    }
+
+                    if (resultsRemove != null)
+                    {
+                        resultsRemove.close();
+                    }
+                }
+                catch(SQLException e)
+                {
+                    System.out.println("Error closing variables.");
+                    e.printStackTrace();
+                }
+            }
+        }
+        System.out.print("Do you want to edit any players? (True or False Case sensitive) ");
+        yorn = in.nextBoolean();
+        System.out.print("First name to edit: ");
+        first = in.next();
+        System.out.print("Last name to edit: ");
+        last = in.next();
+
+        if(yorn)
+        {
+            System.out.print("First: ");
+            fN = in.next();
+            System.out.print("Last: ");
+            lN = in.next();
+            System.out.print("Player number: ");
+            pN = in.nextInt();
+            System.out.print("Position: ");
+            ps = in.next();
+            System.out.print("Expected graduation year: ");
+            gY = in.nextInt();
+            //First name, Last name, Player number, Position, Graduation year
+            conn.editPlayer(first, last, fN, lN, pN, ps, gY);
+
+            try
+            {
+                connection = DriverManager.getConnection(url, user, password);
+                if (connection != null) 
+                {
+                    System.out.println("Successfully connected to the MySQL database.");
+                    
+                    String sql = "SELECT * FROM teamroster;";
+                    q = connection.prepareStatement(sql);
+                    resultsRemove = q.executeQuery();
+                    System.out.println("+----+------------+-----------+---------------+----------+--------------------------+");
+                    System.out.println("| ID | First Name | Last Name | Player Number | Position | Expected Graduation Date |");
+                    System.out.println("+----+------------+-----------+---------------+----------+--------------------------+");
+                    while(resultsRemove.next())
+                    {
+                        idField = resultsRemove.getString("player_id");
+                        firstNameField = resultsRemove.getString("first_name");
+                        lastNameField = resultsRemove.getString("last_name");
+                        playerNumberField = resultsRemove.getString("player_number");
+                        positionField = resultsRemove.getString("position");
+                        expectedGraduationDateField = resultsRemove.getString("expected_graduation_date");
+                        System.out.println("| " + idField + " | " + firstNameField + " | " + lastNameField + " | " + playerNumberField + " | " + positionField + " | " + expectedGraduationDateField + " |");
+                    }
+                }
+            }
+            catch(SQLException e)
+            {
+                e.printStackTrace();
+                System.out.println("\nSQL Connection Error.");
+            }
+            finally
+            {
+                try
+                {
+                    if (q != null)
+                    {
+                        q.close();
+                    }
+
+                    if (connection != null)
+                    {
+                        connection.close();
+                    }
+
+                    if (resultsRemove != null)
+                    {
+                        resultsRemove.close();
+                    }
+                }
+                catch(SQLException e)
+                {
+                    System.out.println("Error closing variables.");
+                    e.printStackTrace();
+                }
             }
         }
     }

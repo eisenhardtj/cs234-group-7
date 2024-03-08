@@ -9,12 +9,13 @@ public class BasketballTeamRosterGUI extends JFrame {
     private ArrayList<Player> players;
     private DefaultListModel<Player> listModel;
     private JList<Player> playerList;
-    private JTextField playerNameField, positionField, playerNumberField, graduationYearField;
+    private JTextField playerNameField, firstNameField, lastNameField, positionField, playerNumberField, graduationYearField;
     JButton increaseFontSizeButton;
     JButton decreaseFontSizeButton;
     private JButton addButton, removeButton, editButton;
     private Player selectedPlayer;
     private Font defaultFont; // Added default font to store original font
+    SQLConnection conn;
 
     public BasketballTeamRosterGUI() {
         super("Basketball Team Roster");
@@ -31,6 +32,7 @@ public class BasketballTeamRosterGUI extends JFrame {
         increaseFontSizeButton = new JButton("Increase Font Size"); // Initialized the button
         decreaseFontSizeButton = new JButton("Decrease Font Size"); // Initialized the button
         defaultFont = playerNameField.getFont(); // Storing the default font
+        conn = new SQLConnection();
 
         // Action listener for the add, remove, edit, increase font size and decrease font size buttons
 
@@ -44,6 +46,7 @@ public class BasketballTeamRosterGUI extends JFrame {
                 Player player = new Player(playerName, position, playerNumber, graduationYear);
                 players.add(player);
                 listModel.addElement(player);
+                conn.addPlayer(firstName, lastName, playerNumber, position, graduationYear);
                 clearFields();
             }
         });
@@ -55,6 +58,7 @@ public class BasketballTeamRosterGUI extends JFrame {
                 if (selectedIndex != -1) {
                     players.remove(selectedIndex);
                     listModel.remove(selectedIndex);
+                    conn.removePlayer(firstName, lastName);
                     clearFields();
                 }
             }
@@ -100,6 +104,7 @@ public class BasketballTeamRosterGUI extends JFrame {
                 positionField.setText(selectedPlayer.getPosition());
                 playerNumberField.setText(String.valueOf(selectedPlayer.getPlayerNumber()));
                 graduationYearField.setText(String.valueOf(selectedPlayer.getGraduationYear()));
+                
             }
         });
 
