@@ -9,7 +9,7 @@ public class BasketballTeamRosterGUI extends JFrame {
     private ArrayList<Player> players;
     private DefaultListModel<Player> listModel;
     private JList<Player> playerList;
-    private JTextField playerNameField, firstNameField, lastNameField, positionField, playerNumberField, graduationYearField;
+    private JTextField FirstNameField, LastNameField, positionField, playerNumberField, graduationYearField;
     JButton increaseFontSizeButton;
     JButton decreaseFontSizeButton;
     private JButton addButton, removeButton, editButton;
@@ -22,7 +22,8 @@ public class BasketballTeamRosterGUI extends JFrame {
         players = new ArrayList<>();
         listModel = new DefaultListModel<>();
         playerList = new JList<>(listModel);
-        playerNameField = new JTextField(15);
+        FirstNameField = new JTextField(15);
+        LastNameField = new JTextField(15);
         positionField = new JTextField(15);
         playerNumberField = new JTextField(8);
         graduationYearField = new JTextField(5);
@@ -31,7 +32,8 @@ public class BasketballTeamRosterGUI extends JFrame {
         editButton = new JButton("Edit Player"); // Initialized the button to edit player
         increaseFontSizeButton = new JButton("Increase Font Size"); // Initialized the button
         decreaseFontSizeButton = new JButton("Decrease Font Size"); // Initialized the button
-        defaultFont = playerNameField.getFont(); // Storing the default font
+        defaultFont = FirstNameField.getFont();
+        defaultFont = LastNameField.getFont(); // Storing the default font
         conn = new SQLConnection();
 
         // Action listener for the add, remove, edit, increase font size and decrease font size buttons
@@ -39,14 +41,15 @@ public class BasketballTeamRosterGUI extends JFrame {
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String playerName = playerNameField.getText();
+                String playerFirstName = FirstNameField.getText();
+                String playerLastName = LastNameField.getText();
                 String position = positionField.getText();
                 int playerNumber = Integer.parseInt(playerNumberField.getText());
                 int graduationYear = Integer.parseInt(graduationYearField.getText());
-                Player player = new Player(playerName, position, playerNumber, graduationYear);
+                Player player = new Player(FirstNameField, LastNameField, position, playerNumber, graduationYear);
                 players.add(player);
                 listModel.addElement(player);
-                conn.addPlayer(firstName, lastName, playerNumber, position, graduationYear);
+                conn.addPlayer(FirstNameField, LastNameField, playerNumber, position, graduationYear);
                 clearFields();
             }
         });
@@ -58,7 +61,7 @@ public class BasketballTeamRosterGUI extends JFrame {
                 if (selectedIndex != -1) {
                     players.remove(selectedIndex);
                     listModel.remove(selectedIndex);
-                    conn.removePlayer(firstName, lastName);
+                    conn.removePlayer(FirstNameField, LastNameField);
                     clearFields();
                 }
             }
@@ -68,7 +71,8 @@ public class BasketballTeamRosterGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (selectedPlayer != null) {
-                    selectedPlayer.setName(playerNameField.getText());
+                    selectedPlayer.setFirstName(FirstNameField.getText());
+                    selectedPlayer.setLastName(LastNameField.getText());
                     selectedPlayer.setPosition(positionField.getText());
                     selectedPlayer.setPlayerNumber(Integer.parseInt(playerNumberField.getText()));
                     selectedPlayer.setGraduationYear(Integer.parseInt(graduationYearField.getText()));
@@ -81,7 +85,8 @@ public class BasketballTeamRosterGUI extends JFrame {
         increaseFontSizeButton.addActionListener(new ActionListener() { 
             @Override
             public void actionPerformed(ActionEvent e) {
-                Font currentFont = playerNameField.getFont();
+                Font currentFont = FirstNameField.getFont();
+                Font currentFont = LastNameField.getFont();
                 Font newFont = currentFont.deriveFont(currentFont.getSize() + 2f);
                 setFontSize(newFont);
             }
@@ -90,7 +95,8 @@ public class BasketballTeamRosterGUI extends JFrame {
         decreaseFontSizeButton.addActionListener(new ActionListener() { 
             @Override
             public void actionPerformed(ActionEvent e) {
-                Font currentFont = playerNameField.getFont();
+                Font currentFont = FirstNameField.getFont();
+                Font currentFont = LastNameField.getFont();
                 Font newFont = currentFont.deriveFont(currentFont.getSize() - 2f);
                 setFontSize(newFont);
             }
@@ -100,7 +106,8 @@ public class BasketballTeamRosterGUI extends JFrame {
         playerList.addListSelectionListener(e -> {
             selectedPlayer = playerList.getSelectedValue();
             if (selectedPlayer != null) {
-                playerNameField.setText(selectedPlayer.getName());
+                FirstNameField.setText(selectedPlayer.getfirstName());
+                LastNameField.setText(selectedPlayer.getlastName());
                 positionField.setText(selectedPlayer.getPosition());
                 playerNumberField.setText(String.valueOf(selectedPlayer.getPlayerNumber()));
                 graduationYearField.setText(String.valueOf(selectedPlayer.getGraduationYear()));
@@ -110,7 +117,8 @@ public class BasketballTeamRosterGUI extends JFrame {
 
         JPanel inputPanel = new JPanel(new GridLayout(5, 2));
         inputPanel.add(new JLabel("Player Name:"));
-        inputPanel.add(playerNameField);
+        inputPanel.add(FirstNameField);
+        inputPanel.add(LastNameField);
         inputPanel.add(new JLabel("Position:"));
         inputPanel.add(positionField);
         inputPanel.add(new JLabel("Player Number:"));
@@ -147,13 +155,16 @@ public class BasketballTeamRosterGUI extends JFrame {
     }
 
     private void clearFields() {
-        playerNameField.setText("");
+        FirstNameField.setText("");
+        LastNameField.setText("");
+
         positionField.setText("");
         playerNumberField.setText("");
         graduationYearField.setText("");
     }
     private void setFontSize(Font font) { // Method to set font size
-        playerNameField.setFont(font);
+        FirstNameField.setFont(font);
+        LastNameField.setFont(font);
         positionField.setFont(font);
         playerNumberField.setFont(font);
         graduationYearField.setFont(font);
@@ -170,24 +181,34 @@ public class BasketballTeamRosterGUI extends JFrame {
     }
 
     private static class Player {
-        private String name;
+        private JTextField firstname;
+        private JTextField lastname;
         private String position;
         private int playerNumber;
         private int graduationYear;
 
-        public Player(String name, String position, int playerNumber, int graduationYear) {
-            this.name = name;
+        public Player(JTextField firstNameField, JTextField lastNameField, String position, int playerNumber, int graduationYear) {
+            this.firstname = firstNameField;
+            this.lastname = lastNameField;
             this.position = position;
             this.playerNumber = playerNumber;
             this.graduationYear = graduationYear;
         }
 
-        public String getName() {
-            return name;
+        public JTextField getfirstName() {
+            return firstname;
         }
 
-        public void setName(String name) {
-            this.name = name;
+        public JTextField getlastName() {
+            return lastname;
+        }
+
+        public void setFirstName(JTextField firstname) {
+            this.firstname = firstname;
+        }
+
+        public void setLastName(JTextField lastname) {
+            this.lastname = lastname;
         }
 
         public String getPosition() {
@@ -216,7 +237,7 @@ public class BasketballTeamRosterGUI extends JFrame {
 
         @Override
         public String toString() {
-            return name + " | Position: " + position + " | Player Number: " + playerNumber + " | Graduation Year: " + graduationYear;
+            return firstname + lastname + " | Position: " + position + " | Player Number: " + playerNumber + " | Graduation Year: " + graduationYear;
         }
     }
 }
