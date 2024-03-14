@@ -44,7 +44,7 @@ public class SQLConnection
         }
     }
 
-    public void addPlayer(JTextField firstNameField, JTextField lastNameField, int number, String position, int gradYear) 
+    public void addPlayer(String firstName, String lastName, int number, String position, int gradYear) 
     {
         connection = openConnection();
         try
@@ -52,8 +52,8 @@ public class SQLConnection
             String sql = "INSERT INTO TeamRoster (first_name, last_name, player_number, position, expected_graduation_date) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement addStatement = connection.prepareStatement(sql);
 
-            addStatement.setString(1, firstNameField);
-            addStatement.setString(2, lastNameField);
+            addStatement.setString(1, firstName);
+            addStatement.setString(2, lastName);
             addStatement.setInt(3, number);
             addStatement.setString(4, position);
             addStatement.setInt(5, gradYear);
@@ -62,7 +62,7 @@ public class SQLConnection
             
             addStatement.close();
 
-            System.out.println("Added " + firstNameField + ", " + lastNameField + " to database.");
+            System.out.println("Added " + firstName + ", " + lastName + " to database.");
         }
         catch (SQLException e) {
             e.printStackTrace();
@@ -74,7 +74,7 @@ public class SQLConnection
         }
     }
 
-    public void removePlayer(JTextField firstNameField, JTextField lastNameField)
+    public void removePlayer(String firstName, String lastName)
     {
         PreparedStatement removeQuery;
         connection = openConnection();
@@ -82,12 +82,12 @@ public class SQLConnection
         {
             String sql = "DELETE FROM TeamRoster WHERE first_name = ? AND last_name = ?;";
             removeQuery = connection.prepareStatement(sql);
-            removeQuery.setString(1, firstNameField);
-            removeQuery.setString(2, lastNameField);
+            removeQuery.setString(1, firstName);
+            removeQuery.setString(2, lastName);
             removeQuery.executeUpdate();
             removeQuery.close();
             
-            System.out.println("Removed " + firstNameField + ", " + lastNameField + " from the roster.");
+            System.out.println("Removed " + firstName + ", " + lastName + " from the roster.");
 
         }
         catch (SQLException e) 
