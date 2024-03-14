@@ -6,3 +6,7 @@ Jeffery Eisenhardt - eisenhardtj
 Christine Colvin - christinecolvin
 Cole Aydelotte - coleaydelotte
 Jalil Rodriguez - JalilR08
+
+# Directions
+
+## First step
