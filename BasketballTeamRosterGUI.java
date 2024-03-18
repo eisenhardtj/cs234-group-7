@@ -18,7 +18,7 @@ public class BasketballTeamRosterGUI extends JFrame {
     SQLConnection conn;
 
     public BasketballTeamRosterGUI() {
-        super("Basketball Team Roster");
+        super("Moravian Woman's Basketball Team Roster");
         players = new ArrayList<>();
         listModel = new DefaultListModel<>();
         playerList = new JList<>(listModel);
