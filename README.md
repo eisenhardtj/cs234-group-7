@@ -10,3 +10,5 @@ Jalil Rodriguez - JalilR08
 # Directions
 
 ## First step
+
+Download and install MySQL for your macbook following the instructions from here https://dev.mysql.com/doc/refman/8.3/en/macos-installation-pkg.html
