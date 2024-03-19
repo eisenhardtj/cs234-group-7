@@ -12,3 +12,11 @@ Jalil Rodriguez - JalilR08
 ## First step
 
 Download and install MySQL for your macbook following the instructions from here https://dev.mysql.com/doc/refman/8.3/en/macos-installation-pkg.html
+
+## Second step
+
+Clone the repository into a preferred location
+
+## Third Step
+
+After opening the repository, you have to run BasketballTeamRosterGUI.java file
