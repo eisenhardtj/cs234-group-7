@@ -144,7 +144,7 @@ public class BasketballTeamRosterGUI extends JFrame {
 
         getContentPane().add(mainPanel);
 
-        setSize(getMaximumSize());
+        setSize(2160, 1920);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
     }
@@ -237,7 +237,7 @@ public class BasketballTeamRosterGUI extends JFrame {
 
         @Override
         public String toString() {
-            return firstName +  ", " + lastName + " | Position: " + position + " | Player Number: " + playerNumber + " | Graduation Year: " + graduationYear;
+            return "Name: " + firstName +  ", " + lastName + " | Position: " + position + " | Player Number: " + playerNumber + " | Graduation Year: " + graduationYear;
         }
     }
 }
