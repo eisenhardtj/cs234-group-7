@@ -120,7 +120,7 @@ public class BasketballTeamRosterGUI extends JFrame {
             }
         });
 
-        JPanel inputPanel = new JPanel(new GridLayout(5, 2));
+        JPanel inputPanel = new JPanel(new GridLayout(10, 2)); //changing this will change how large the input fields are
         inputPanel.add(new JLabel("First Name:"));
         inputPanel.add(firstNameField);
         inputPanel.add(new JLabel("Last Name:"));
@@ -162,9 +162,10 @@ public class BasketballTeamRosterGUI extends JFrame {
 
     private JTextField createTextField(int columns) {
         JTextField textField = new JTextField(columns);
-        textField.setPreferredSize(new Dimension(textField.getPreferredSize().width, 10)); // Set preferred height
+        textField.setPreferredSize(new Dimension(textField.getPreferredSize().width, 20)); // Set preferred height
         return textField;
     }
+
 
     private void clearFields() {
         firstNameField.setText("");
