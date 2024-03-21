@@ -34,6 +34,7 @@ public class BasketballTeamRosterGUI extends JFrame {
         decreaseFontSizeButton = new JButton("Decrease Font Size"); // Initialized the button
         defaultFont = firstNameField.getFont(); // Storing the default font
         conn = new SQLConnection();
+        repopulateLists();
 
         // Action listener for the add, remove, edit, increase font size and decrease font size buttons
 
@@ -169,6 +170,19 @@ public class BasketballTeamRosterGUI extends JFrame {
         playerNumberField.setFont(font);
         graduationYearField.setFont(font);
         playerList.setFont(font);
+    }
+
+    private void repopulateLists()
+    {
+        ArrayList<String[]> data;
+        data = conn.dataToArrayList();
+        for(int x = 0; x < data.size(); x++)
+        {
+            String[] player = data.get(x);
+            Player newPlayer = new Player(player[0], player[1], player[3], Integer.parseInt(player[2]), Integer.parseInt(player[4]));
+            players.add(newPlayer);
+            listModel.addElement(newPlayer);
+        }
     }
 
     public static void main(String[] args) {
