@@ -3,6 +3,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
 
 public class BasketballTeamRosterGUI extends JFrame {
 
@@ -13,6 +16,7 @@ public class BasketballTeamRosterGUI extends JFrame {
     JButton increaseFontSizeButton;
     JButton decreaseFontSizeButton;
     private JButton addButton, removeButton, editButton;
+    private JComboBox<String> sortingComboBox; // Added JComboBox for sorting methods
     private Player selectedPlayer;
     private Font defaultFont; // Added default font to store original font
     SQLConnection conn;
@@ -32,6 +36,7 @@ public class BasketballTeamRosterGUI extends JFrame {
         editButton = new JButton("Edit Player"); // Initialized the button to edit player
         increaseFontSizeButton = new JButton("Increase Font Size"); // Initialized the button
         decreaseFontSizeButton = new JButton("Decrease Font Size"); // Initialized the button
+        sortingComboBox = new JComboBox<>(new String[]{"Sort by Last Name", "Sort by Player Number"}); // Initialized JComboBox
         defaultFont = firstNameField.getFont(); // Storing the default font
         conn = new SQLConnection();
 
@@ -126,6 +131,8 @@ public class BasketballTeamRosterGUI extends JFrame {
         inputPanel.add(playerNumberField);
         inputPanel.add(new JLabel("Graduation Year:"));
         inputPanel.add(graduationYearField);
+        inputPanel.add(new JLabel("Sort By:")); // Added label for sorting combo box
+        inputPanel.add(sortingComboBox); // Added sorting combo box
         
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -142,6 +149,10 @@ public class BasketballTeamRosterGUI extends JFrame {
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
         mainPanel.add(scrollPane, BorderLayout.CENTER);
 
+        // Creating tabbed pane for different sections
+        JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane.addTab("Roster", mainPanel);
+        
         getContentPane().add(mainPanel);
 
         setSize(2160, 1920);
@@ -162,6 +173,24 @@ public class BasketballTeamRosterGUI extends JFrame {
         playerNumberField.setText("");
         graduationYearField.setText("");
     }
+
+        private void sortPlayersByLastName() {
+        Collections.sort(players, Comparator.comparing(Player::getlastName)); // Sort by last name
+        updateListModel();
+    }
+
+    private void sortPlayersByPlayerNumber() {
+        Collections.sort(players, Comparator.comparingInt(Player::getPlayerNumber)); // Sort by player number
+        updateListModel();
+    }
+
+    private void updateListModel() {
+        listModel.clear();
+        for (Player player : players) {
+            listModel.addElement(player);
+        }
+    }
+
     private void setFontSize(Font font) { // Method to set font size
         firstNameField.setText("");
         lastNameField.setText("");
