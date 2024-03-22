@@ -1,12 +1,3 @@
-/**
- * Test program currently being used to check backend functionality.
- * 
- * Authors: 
- * Jeffery Eisenhardt - eisenhardtj
- * Christine Colvin - christinecolvin
- * Cole Aydelotte - coleaydelotte
- * Jalil Rodriguez - JalilR08
- */
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -14,8 +5,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
-
-import com.mysql.cj.x.protobuf.MysqlxDatatypes.Array;
 
 import java.sql.ResultSet;
 
@@ -42,6 +31,9 @@ public class MySQLConnection {
         {
             System.out.println(Arrays.toString(player));
         }
+
+        conn.archivePlayer("Brody", "Long");
+
 
         // System.out.print("Do you want to add players? (True or False Case sensitive) ");
         // yorn = in.nextBoolean();

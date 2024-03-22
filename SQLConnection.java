@@ -116,6 +116,54 @@ public class SQLConnection
         }
     }
 
+    public void archivePlayer(String firstName, String lastName)
+    {
+        connection = openConnection();
+        try
+        {
+            String sql = "SELECT * FROM TeamRoster WHERE first_name = ? AND last_name = ?;";
+            PreparedStatement archiveQuery = connection.prepareStatement(sql);
+            archiveQuery.setString(1, firstName);
+            archiveQuery.setString(2, lastName);
+            ResultSet rs = archiveQuery.executeQuery();
+            while (rs.next())
+            {
+                String archivedFirstName = rs.getString("first_name");
+                String archivedLastName = rs.getString("last_name");
+                int archivedNumber = rs.getInt("player_number");
+                String archivedPosition = rs.getString("position");
+                int archivedGradYear = rs.getInt("expected_graduation_date");
+                
+                String deleteSql = "DELETE FROM TeamRoster WHERE first_name = ? AND last_name = ?;";
+                String insertSql = " INSERT INTO ArchivePlayers (first_name, last_name, player_number, position, expected_graduation_date) VALUES (?, ?, ?, ?, ?)";
+                PreparedStatement preparedArchiveStatement = connection.prepareStatement(insertSql);
+                PreparedStatement preparedDeleteStatement = connection.prepareStatement(deleteSql);
+
+                preparedArchiveStatement.setString(1, archivedFirstName);
+                preparedArchiveStatement.setString(2, archivedLastName);
+                preparedArchiveStatement.setInt(3, archivedNumber);
+                preparedArchiveStatement.setString(4, archivedPosition);
+                preparedArchiveStatement.setInt(5, archivedGradYear);
+
+                preparedDeleteStatement.setString(1, archivedFirstName);
+                preparedDeleteStatement.setString(2, archivedLastName);
+
+                preparedArchiveStatement.executeUpdate();
+                preparedDeleteStatement.executeUpdate();
+            }
+            archiveQuery.close();
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+            System.out.println("\nFailed to archive player from database.");
+        }
+        finally
+        {
+            closeConnection(connection);
+        }
+    }
+
     public void removePlayer(String firstName, String lastName)
     {
         PreparedStatement removeQuery;
