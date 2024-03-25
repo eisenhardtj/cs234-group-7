@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 
 
 public class BasketballTeamRosterGUI extends JFrame {
@@ -33,7 +35,7 @@ public class BasketballTeamRosterGUI extends JFrame {
         playerNumberField = new JTextField(8);
         graduationYearField = new JTextField(5);
         addButton = new JButton("Add Player"); // Initialized the button to add player
-        removeButton = new JButton("Remove Player"); // Initialized the button to remove player
+        removeButton = new JButton("Archive Player"); // Initialized the button to remove player
         editButton = new JButton("Edit Player"); // Initialized the button to edit player
         increaseFontSizeButton = new JButton("Increase Font Size"); // Initialized the button
         decreaseFontSizeButton = new JButton("Decrease Font Size"); // Initialized the button
@@ -198,6 +200,22 @@ public class BasketballTeamRosterGUI extends JFrame {
         } catch (SQLException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Failed to load players from database: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void archivePlayer(Player player) {
+        try {
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/MoravianWomensTeam24", "project", "project");
+            String sql = "UPDATE players SET archived = ? WHERE firstName = ? AND lastName = ?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setBoolean(1, true);
+            statement.setString(2, player.getFirstName());
+            statement.setString(3, player.getlastName());
+            statement.executeUpdate();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Failed to archive player: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
