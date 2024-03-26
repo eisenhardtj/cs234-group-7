@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.sql.*;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 
 
 public class BasketballTeamRosterGUI extends JFrame {
@@ -157,7 +155,9 @@ public class BasketballTeamRosterGUI extends JFrame {
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.addTab("Roster", mainPanel);
         
-        getContentPane().add(mainPanel);
+        tabbedPane.addTab("Roster", mainPanel);
+        getContentPane().add(tabbedPane);
+        getContentPane().add(tabbedPane);
 
         setSize(2160, 1920);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -327,4 +327,26 @@ public class BasketballTeamRosterGUI extends JFrame {
             return "Name: " + firstName +  ", " + lastName + " | Position: " + position + " | Player Number: " + playerNumber + " | Graduation Year: " + graduationYear;
         }
     }
+    public class TabbedPaneExample extends JFrame {
+        public TabbedPaneExample() {
+            JTabbedPane tabbedPane = new JTabbedPane();
+            JTabbedPane freeThrows = new JTabbedPane();
+            freeThrows.add(new JLabel("Free Throws Attempted "));
+            JPanel threeThrows = new JPanel();
+            threeThrows.add(new JLabel("Three Points Attempted "));
+            tabbedPane.addTab("Free Throws", freeThrows);
+            tabbedPane.addTab("Three Pointers", threeThrows);
+
+            getContentPane().add(tabbedPane);
+        
+            pack();
+            setLocationRelativeTo(null);
+        }
+
+                public static void main(String[] args) {
+                    SwingUtilities.invokeLater(() -> {
+                        new BasketballTeamRosterGUI().new TabbedPaneExample().setVisible(true);
+                    });
+                }
+            }
 }
