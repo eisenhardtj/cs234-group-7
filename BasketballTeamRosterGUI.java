@@ -21,6 +21,10 @@ public class BasketballTeamRosterGUI extends JFrame {
     private Player selectedPlayer;
     private Font defaultFont; // Added default font to store original font
     SQLConnection conn;
+    private JPanel  panel1;
+    private JPanel  panel2;
+    private JPanel  panel3;
+    private JPanel  panel4;
 
     public BasketballTeamRosterGUI() {
         super("Moravian Woman's Basketball Team Roster");
@@ -154,14 +158,18 @@ public class BasketballTeamRosterGUI extends JFrame {
         // Creating tabbed pane for different sections
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.addTab("Roster", mainPanel);
-        
-        tabbedPane.addTab("Roster", mainPanel);
+        tabbedPane.addTab("Archived Players", panel1); 
+        tabbedPane.addTab("Free Throws", panel2);
+        tabbedPane.addTab("Three Pointers", panel3);
+    
         getContentPane().add(tabbedPane);
         getContentPane().add(tabbedPane);
 
         setSize(2160, 1920);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
+
+        mainPanel.add(tabbedPane);
     }
 
     private JTextField createTextField(int columns) {
