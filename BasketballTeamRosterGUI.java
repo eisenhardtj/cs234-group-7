@@ -44,6 +44,8 @@ public class BasketballTeamRosterGUI extends JFrame {
         sortingComboBox = new JComboBox<>(new String[]{"Sort by Last Name", "Sort by Player Number"}); // Initialized JComboBox
         defaultFont = firstNameField.getFont(); // Storing the default font
         conn = new SQLConnection();
+
+        
         // repopulateLists();
 
         // Action listener for the add, remove, edit, increase font size and decrease font size buttons
@@ -78,7 +80,6 @@ public class BasketballTeamRosterGUI extends JFrame {
                 }
             }
         });
-
         editButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -334,5 +335,7 @@ public class BasketballTeamRosterGUI extends JFrame {
         public String toString() {
             return "Name: " + firstName +  ", " + lastName + " | Position: " + position + " | Player Number: " + playerNumber + " | Graduation Year: " + graduationYear;
         }
+
+        
     }
 }
