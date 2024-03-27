@@ -19,6 +19,11 @@
 -- Table structure for table `archiveplayers`
 --
 
+
+CREATE DATABASE IF NOT EXISTS moravianwomensteam24;
+
+USE moravianwomensteam24;
+
 DROP TABLE IF EXISTS `archiveplayers`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
@@ -39,7 +44,6 @@ CREATE TABLE `archiveplayers` (
 
 LOCK TABLES `archiveplayers` WRITE;
 /*!40000 ALTER TABLE `archiveplayers` DISABLE KEYS */;
-INSERT INTO `archiveplayers` VALUES (1,'brody','long',45,'C',2026),(2,'Brody','Long',45,'C',2026),(3,'Cole','Aydelotte',7,'C',2026),(4,'Cole','Aydelotte',7,'C',2026),(5,'Cole','Aydelotte',7,'C',2026),(6,'Cole','Aydelotte',7,'C',2026),(7,'Brody','Long',7,'C',2026),(8,'Cole','Aydelotte',7,'C',2026),(9,'Cole','Aydelotte',7,'C',2026);
 /*!40000 ALTER TABLE `archiveplayers` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -51,6 +55,8 @@ DROP TABLE IF EXISTS `freethrows`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `freethrows` (
+  `first_name` varchar(100) DEFAULT NULL,
+  `last_name` varchar(100) DEFAULT NULL,
   `date` date DEFAULT NULL,
   `made` int DEFAULT NULL,
   `attempted` int DEFAULT NULL,
@@ -104,6 +110,8 @@ DROP TABLE IF EXISTS `threepointshots`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `threepointshots` (
+  `first_name` varchar(100) DEFAULT NULL,
+  `last_name` varchar(100) DEFAULT NULL,
   `date` date DEFAULT NULL,
   `made` int DEFAULT NULL,
   `attempted` int DEFAULT NULL,
