@@ -169,13 +169,14 @@ public class BasketballTeamRosterGUI extends JFrame {
         tabbedPane.addTab("Free Throws", panel2);
         tabbedPane.addTab("Three Pointers", panel3);
     
-        getContentPane().add(tabbedPane);
+        // getContentPane().add(tabbedPane);
+        setContentPane(tabbedPane);
 
         setSize(2160, 1920);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
 
-        mainPanel.add(tabbedPane);
+        // mainPanel.add(tabbedPane);
     }
 
     private JTextField createTextField(int columns) {
