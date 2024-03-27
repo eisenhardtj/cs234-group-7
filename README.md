@@ -23,8 +23,7 @@ Clone the repository into a preferred location
 
 ## Third Step
 
-You then will then open your terminal, navigate to the path where you cloned the repository, then run the command `Exception in thread "AWT-EventQueue-0" java.lang.NullPointerException: Cannot invoke "java.sql.Connection.close()" because "<parameter1>" is null
-`
+You then will then open your terminal, navigate to the path where you cloned the repository, then run the command `mysql -u project -p < dumpfiles/dump.sql`
 
 ## Fourth Step
 
