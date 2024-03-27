@@ -12,19 +12,19 @@ public class BasketballTeamRosterGUI extends JFrame {
 
     private ArrayList<Player> players;
     private DefaultListModel<Player> listModel;
+    
     private JList<Player> playerList;
     private JTextField firstNameField, lastNameField, positionField, playerNumberField, graduationYearField;
     JButton increaseFontSizeButton;
     JButton decreaseFontSizeButton;
-    private JButton addButton, removeButton, editButton;
+    private JButton addButton, archiveButton, editButton;
     private JComboBox<String> sortingComboBox; // Added JComboBox for sorting methods
     private Player selectedPlayer;
     private Font defaultFont; // Added default font to store original font
     SQLConnection conn;
-    private JPanel  panel1;
-    private JPanel  panel2;
-    private JPanel  panel3;
-    private JPanel  panel4;
+    private ArchivedPanel archivedPanel;
+    private JPanel panel2;
+    private JPanel panel3;
 
     public BasketballTeamRosterGUI() {
         super("Moravian Woman's Basketball Team Roster");
@@ -37,16 +37,20 @@ public class BasketballTeamRosterGUI extends JFrame {
         playerNumberField = new JTextField(8);
         graduationYearField = new JTextField(5);
         addButton = new JButton("Add Player"); // Initialized the button to add player
-        removeButton = new JButton("Archive Player"); // Initialized the button to remove player
+        archiveButton = new JButton("Archive Player"); // Initialized the button to remove player
         editButton = new JButton("Edit Player"); // Initialized the button to edit player
         increaseFontSizeButton = new JButton("Increase Font Size"); // Initialized the button
         decreaseFontSizeButton = new JButton("Decrease Font Size"); // Initialized the button
         sortingComboBox = new JComboBox<>(new String[]{"Sort by Last Name", "Sort by Player Number"}); // Initialized JComboBox
         defaultFont = firstNameField.getFont(); // Storing the default font
         conn = new SQLConnection();
+        archivedPanel = new ArchivedPanel();
+        panel2 = new JPanel();
+        panel3 = new JPanel();
+
 
         
-        // repopulateLists();
+        repopulateLists();
 
         // Action listener for the add, remove, edit, increase font size and decrease font size buttons
 
@@ -66,16 +70,18 @@ public class BasketballTeamRosterGUI extends JFrame {
             }
         });
 
-        removeButton.addActionListener(new ActionListener() {
+        archiveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int selectedIndex = playerList.getSelectedIndex();
-                if (selectedIndex != -1) {
+                if (selectedIndex != -1) 
+                {
+                    archivedPanel.addToListModel(players.get(selectedIndex));
                     String firstName = players.get(selectedIndex).getFirstName();
                     String lastName = players.get(selectedIndex).getlastName();
                     players.remove(selectedIndex);
                     listModel.remove(selectedIndex);
-                    conn.removePlayer(firstName, lastName);
+                    conn.archivePlayer(firstName, lastName);
                     clearFields();
                 }
             }
@@ -144,7 +150,7 @@ public class BasketballTeamRosterGUI extends JFrame {
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         buttonPanel.add(addButton); // Added button to add player
-        buttonPanel.add(removeButton); // Added button to remove player
+        buttonPanel.add(archiveButton); // Added button to remove player
         buttonPanel.add(editButton); // Added button to edit player
         buttonPanel.add(increaseFontSizeButton); // Added button to increase font size
         buttonPanel.add(decreaseFontSizeButton); // Added button to decrease font size
@@ -159,11 +165,10 @@ public class BasketballTeamRosterGUI extends JFrame {
         // Creating tabbed pane for different sections
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.addTab("Roster", mainPanel);
-        tabbedPane.addTab("Archived Players", panel1); 
+        tabbedPane.addTab("Archived Players", archivedPanel); 
         tabbedPane.addTab("Free Throws", panel2);
         tabbedPane.addTab("Three Pointers", panel3);
     
-        getContentPane().add(tabbedPane);
         getContentPane().add(tabbedPane);
 
         setSize(2160, 1920);
@@ -179,7 +184,6 @@ public class BasketballTeamRosterGUI extends JFrame {
         return textField;
     }
 
-
     private void clearFields() {
         firstNameField.setText("");
         lastNameField.setText("");;
@@ -188,45 +192,45 @@ public class BasketballTeamRosterGUI extends JFrame {
         graduationYearField.setText("");
     }
 
-    private void loadPlayersFromDatabase() {
-        try {
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/MoravianWomensTeam24", "project", "project");
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM players");
-            while (resultSet.next()) {
-                String firstName = resultSet.getString("firstName");
-                String lastName = resultSet.getString("lastName");
-                String position = resultSet.getString("position");
-                int playerNumber = resultSet.getInt("playerNumber");
-                int graduationYear = resultSet.getInt("graduationYear");
-                int freeThrowsAttempted = resultSet.getInt("freeThrowsAttempted");
-                int freeThrowsMade = resultSet.getInt("freeThrowsMade");
-                players.add(new Player(firstName, lastName, position, playerNumber, graduationYear));
-            }
-            resultSet.close();
-            statement.close();
-            updateListModel();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Failed to load players from database: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
+    // private void loadPlayersFromDatabase() {
+    //     try {
+    //         Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/MoravianWomensTeam24", "project", "project");
+    //         Statement statement = connection.createStatement();
+    //         ResultSet resultSet = statement.executeQuery("SELECT * FROM players");
+    //         while (resultSet.next()) {
+    //             String firstName = resultSet.getString("firstName");
+    //             String lastName = resultSet.getString("lastName");
+    //             String position = resultSet.getString("position");
+    //             int playerNumber = resultSet.getInt("playerNumber");
+    //             int graduationYear = resultSet.getInt("graduationYear");
+    //             int freeThrowsAttempted = resultSet.getInt("freeThrowsAttempted");
+    //             int freeThrowsMade = resultSet.getInt("freeThrowsMade");
+    //             players.add(new Player(firstName, lastName, position, playerNumber, graduationYear));
+    //         }
+    //         resultSet.close();
+    //         statement.close();
+    //         updateListModel();
+    //     } catch (SQLException e) {
+    //         e.printStackTrace();
+    //         JOptionPane.showMessageDialog(this, "Failed to load players from database: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    //     }
+    // }
 
-    private void archivePlayer(Player player) {
-        try {
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/MoravianWomensTeam24", "project", "project");
-            String sql = "UPDATE players SET archived = ? WHERE firstName = ? AND lastName = ?";
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setBoolean(1, true);
-            statement.setString(2, player.getFirstName());
-            statement.setString(3, player.getlastName());
-            statement.executeUpdate();
-            statement.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Failed to archive player: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
+    // private void archivePlayer(Player player) {
+    //     try {
+    //         Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/MoravianWomensTeam24", "project", "project");
+    //         String sql = "UPDATE players SET archived = ? WHERE firstName = ? AND lastName = ?";
+    //         PreparedStatement statement = connection.prepareStatement(sql);
+    //         statement.setBoolean(1, true);
+    //         statement.setString(2, player.getFirstName());
+    //         statement.setString(3, player.getlastName());
+    //         statement.executeUpdate();
+    //         statement.close();
+    //     } catch (SQLException e) {
+    //         e.printStackTrace();
+    //         JOptionPane.showMessageDialog(this, "Failed to archive player: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    //     }
+    // }
 
     private void sortPlayersByLastName() {
         Collections.sort(players, Comparator.comparing(Player::getlastName));
@@ -235,6 +239,12 @@ public class BasketballTeamRosterGUI extends JFrame {
 
     private void sortPlayersByPlayerNumber() {
         Collections.sort(players, Comparator.comparingInt(Player::getPlayerNumber));
+        updateListModel();
+    }
+
+    private void removeFromArrayList(Player player) 
+    {
+        players.remove(player);
         updateListModel();
     }
 
@@ -254,18 +264,18 @@ public class BasketballTeamRosterGUI extends JFrame {
         playerList.setFont(font);
     }
 
-    // private void repopulateLists()
-    // {
-    //     ArrayList<String[]> data;
-    //     data = conn.dataToArrayList();
-    //     for(int x = 0; x < data.size(); x++)
-    //     {
-    //         String[] player = data.get(x);
-    //         Player newPlayer = new Player(player[0], player[1], player[3], Integer.parseInt(player[2]), Integer.parseInt(player[4]));
-    //         players.add(newPlayer);
-    //         listModel.addElement(newPlayer);
-    //     }
-    // }
+    private void repopulateLists()
+    {
+        ArrayList<String[]> data;
+        data = conn.dataToArrayList();
+        for(int x = 0; x < data.size(); x++)
+        {
+            String[] player = data.get(x);
+            Player newPlayer = new Player(player[0], player[1], player[3], Integer.parseInt(player[2]), Integer.parseInt(player[4]));
+            players.add(newPlayer);
+            listModel.addElement(newPlayer);
+        }
+    }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -274,68 +284,5 @@ public class BasketballTeamRosterGUI extends JFrame {
                 new BasketballTeamRosterGUI();
             }
         });
-    }
-
-    private static class Player {
-        private String firstName;
-        private String lastName;
-        private String position;
-        private int playerNumber;
-        private int graduationYear;
-
-        public Player(String firstName, String lastName, String position, int playerNumber, int graduationYear) {
-            this.firstName = firstName;
-            this.lastName = lastName;
-            this.position = position;
-            this.playerNumber = playerNumber;
-            this.graduationYear = graduationYear;
-        }
-
-        public String getFirstName() {
-            return firstName;
-        }
-
-        public String getlastName() {
-            return lastName;
-        }
-
-        public void setFirstName(String firstName) {
-            this.firstName = firstName;
-        }
-
-        public void setLastName(String lastName) {
-            this.lastName = lastName;
-        }
-
-        public String getPosition() {
-            return position;
-        }
-
-        public void setPosition(String position) {
-            this.position = position;
-        }
-
-        public int getPlayerNumber() {
-            return playerNumber;
-        }
-
-        public void setPlayerNumber(int playerNumber) {
-            this.playerNumber = playerNumber;
-        }
-
-        public int getGraduationYear() {
-            return graduationYear;
-        }
-
-        public void setGraduationYear(int graduationYear) {
-            this.graduationYear = graduationYear;
-        }
-
-        @Override
-        public String toString() {
-            return "Name: " + firstName +  ", " + lastName + " | Position: " + position + " | Player Number: " + playerNumber + " | Graduation Year: " + graduationYear;
-        }
-
-        
     }
 }

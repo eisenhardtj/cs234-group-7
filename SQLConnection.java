@@ -134,10 +134,8 @@ public class SQLConnection
                 String archivedPosition = rs.getString("position");
                 int archivedGradYear = rs.getInt("expected_graduation_date");
                 
-                String deleteSql = "DELETE FROM TeamRoster WHERE first_name = ? AND last_name = ?;";
                 String insertSql = " INSERT INTO ArchivePlayers (first_name, last_name, player_number, position, expected_graduation_date) VALUES (?, ?, ?, ?, ?)";
                 PreparedStatement preparedArchiveStatement = connection.prepareStatement(insertSql);
-                PreparedStatement preparedDeleteStatement = connection.prepareStatement(deleteSql);
 
                 preparedArchiveStatement.setString(1, archivedFirstName);
                 preparedArchiveStatement.setString(2, archivedLastName);
@@ -145,11 +143,11 @@ public class SQLConnection
                 preparedArchiveStatement.setString(4, archivedPosition);
                 preparedArchiveStatement.setInt(5, archivedGradYear);
 
-                preparedDeleteStatement.setString(1, archivedFirstName);
-                preparedDeleteStatement.setString(2, archivedLastName);
+                int rowsAffected = preparedArchiveStatement.executeUpdate();
+                System.out.println(rowsAffected + " rows affected.");
+                preparedArchiveStatement.close();
 
-                preparedArchiveStatement.executeUpdate();
-                preparedDeleteStatement.executeUpdate();
+                removePlayer(firstName, lastName);
             }
             archiveQuery.close();
         }
@@ -184,39 +182,6 @@ public class SQLConnection
         {
             e.printStackTrace();
             System.out.println("\nFailed to remove player from database.");
-        }
-        finally
-        {
-            closeConnection(connection);
-        }
-    }
-
-    public void archivePlayer(String firstName, String lastName, int number, String position, int gradYear)
-    {
-        connection = openConnection();
-        try 
-        {
-            String sql = "INSERT INTO ArchivedPlayers (first_name, last_name, player_number, position, expected_graduation_date) VALUES (?, ?, ?, ?, ?)";
-            PreparedStatement addStatement = connection.prepareStatement(sql);
-
-            addStatement.setString(1, firstName);
-            addStatement.setString(2, lastName);
-            addStatement.setInt(3, number);
-            addStatement.setString(4, position);
-            addStatement.setInt(5, gradYear);
-
-            addStatement.executeUpdate();
-            
-            addStatement.close();
-
-            System.out.println("Added " + firstName + ", " + lastName + " to archived player database.");
-
-            removePlayer(firstName, lastName);
-        }
-        catch (SQLException e) 
-        {
-            e.printStackTrace();
-            System.out.println("\nFailed to add player to database.");
         }
         finally
         {
