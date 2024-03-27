@@ -86,6 +86,8 @@ public class BasketballTeamRosterGUI extends JFrame {
                 }
             }
         });
+
+        
         editButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -119,6 +121,18 @@ public class BasketballTeamRosterGUI extends JFrame {
                 setFontSize(newFont);
             }
         });
+        sortingComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String selectedSortOption = (String) sortingComboBox.getSelectedItem();
+                if (selectedSortOption.equals("Sort by Last Name")) {
+                    sortPlayersByLastName();
+                } else if (selectedSortOption.equals("Sort by Player Number")) {
+                    sortPlayersByPlayerNumber();
+                }
+            }
+        });
+        
 
 
         playerList.addListSelectionListener(e -> {
@@ -248,6 +262,7 @@ public class BasketballTeamRosterGUI extends JFrame {
         players.remove(player);
         updateListModel();
     }
+    
 
     private void updateListModel() {
         listModel.clear();
