@@ -43,6 +43,10 @@ then enter the following command:
 ```sql
 GRANT ALL PRIVILEGES ON *.* TO 'project'@'localhost' WITH GRANT OPTION;
 ```
+after you can enter quit into the terminal.
+```sql
+quit
+```
 ## Fourth Step
 Clone the repository into a preferred location using the command:
 ```shell
@@ -56,6 +60,7 @@ then run the command:
 ```shell
 mysql -u project -p < dumpfiles/dump.sql
 ```
+You will be prompted to enter a password enter 'project' case sensitive.
 
 ## Sixth Step
 
