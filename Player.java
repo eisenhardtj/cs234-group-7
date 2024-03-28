@@ -1,3 +1,9 @@
+/**
+ * Player class that creates a player object with a first name, last name, position, 
+ * player number, and graduation year.
+ * 
+ * Authors: Jeffery Eisenhardt, Christine Colvin
+ */
 public class Player {
     private String firstName;
     private String lastName;

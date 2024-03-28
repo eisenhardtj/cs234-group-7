@@ -1,4 +1,8 @@
-// Add daily tracking if needed, such as a Map<Date, FreeThrowStats> 
+/**
+ * Class that represents a player's point session for a given date.
+ * 
+ * Author: Jalil Rodriquez
+ */
 public class Points {
 
     private int freeThrowsMade;
@@ -7,7 +11,7 @@ public class Points {
     private String firstName;
     private String lastName;
 
-    public Points(String firstName, String lastName, String date, int freeThrowsMade, int freeThrowsAttempted) {
+    public Points(String firstName, String lastName, String date, int freeThrowsAttempted, int freeThrowsMade) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.date = date;
@@ -35,6 +39,18 @@ public class Points {
         return freeThrowsAttempted;
     }
 
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
     public void setFreeThrowsMade(int freeThrowsMade) {
         this.freeThrowsMade = freeThrowsMade;
     }
@@ -51,7 +67,7 @@ public class Points {
     public double getFreeThrowSuccessRate() {
         if (freeThrowsAttempted == 0) return 0;
         
-        return Math.round(((double)freeThrowsAttempted / freeThrowsMade) * 100);
+        return Math.round(((double) freeThrowsMade / freeThrowsAttempted) * 100);
     }
 
     @Override
