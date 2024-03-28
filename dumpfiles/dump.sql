@@ -57,12 +57,9 @@ DROP TABLE IF EXISTS `freethrows`;
 CREATE TABLE `freethrows` (
   `first_name` varchar(100) DEFAULT NULL,
   `last_name` varchar(100) DEFAULT NULL,
-  `date` date DEFAULT NULL,
+  `date` varchar(20) DEFAULT NULL,
   `made` int DEFAULT NULL,
-  `attempted` int DEFAULT NULL,
-  `player_id` int DEFAULT NULL,
-  KEY `player_id` (`player_id`),
-  CONSTRAINT `freethrows_ibfk_1` FOREIGN KEY (`player_id`) REFERENCES `teamroster` (`player_id`)
+  `attempted` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -112,12 +109,9 @@ DROP TABLE IF EXISTS `threepointshots`;
 CREATE TABLE `threepointshots` (
   `first_name` varchar(100) DEFAULT NULL,
   `last_name` varchar(100) DEFAULT NULL,
-  `date` date DEFAULT NULL,
+  `date` varchar(20) DEFAULT NULL,
   `made` int DEFAULT NULL,
-  `attempted` int DEFAULT NULL,
-  `player_id` int DEFAULT NULL,
-  KEY `player_id` (`player_id`),
-  CONSTRAINT `threepointshots_ibfk_1` FOREIGN KEY (`player_id`) REFERENCES `teamroster` (`player_id`)
+  `attempted` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

@@ -23,8 +23,8 @@ public class BasketballTeamRosterGUI extends JFrame {
     private Font defaultFont; // Added default font to store original font
     SQLConnection conn;
     private ArchivedPanel archivedPanel;
-    private JPanel panel2;
-    private JPanel panel3;
+    private FreeThrowPanel freeThrowPanel;
+    private ThreePointPanel threePointPanel;
 
     public BasketballTeamRosterGUI() {
         super("Moravian Woman's Basketball Team Roster");
@@ -45,8 +45,8 @@ public class BasketballTeamRosterGUI extends JFrame {
         defaultFont = firstNameField.getFont(); // Storing the default font
         conn = new SQLConnection();
         archivedPanel = new ArchivedPanel();
-        panel2 = new JPanel();
-        panel3 = new JPanel();
+        freeThrowPanel = new FreeThrowPanel();
+        threePointPanel = new ThreePointPanel();
 
 
         
@@ -106,7 +106,7 @@ public class BasketballTeamRosterGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Font currentFont = firstNameField.getFont();
-                Font newFont = currentFont.deriveFont(currentFont.getSize() + 2f);
+                Font newFont = currentFont.deriveFont(currentFont.getSize() + 10f);
                 setFontSize(newFont);
             }
         });
@@ -166,8 +166,8 @@ public class BasketballTeamRosterGUI extends JFrame {
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.addTab("Roster", mainPanel);
         tabbedPane.addTab("Archived Players", archivedPanel); 
-        tabbedPane.addTab("Free Throws", panel2);
-        tabbedPane.addTab("Three Pointers", panel3);
+        tabbedPane.addTab("Free Throws", freeThrowPanel);
+        tabbedPane.addTab("Three Pointers", threePointPanel);
     
         // getContentPane().add(tabbedPane);
         setContentPane(tabbedPane);
@@ -268,7 +268,7 @@ public class BasketballTeamRosterGUI extends JFrame {
     private void repopulateLists()
     {
         ArrayList<String[]> data;
-        data = conn.dataToArrayList();
+        data = conn.dataToArrayListTeamRoster();
         for(int x = 0; x < data.size(); x++)
         {
             String[] player = data.get(x);

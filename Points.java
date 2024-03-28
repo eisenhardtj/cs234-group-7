@@ -3,22 +3,40 @@ public class Points {
 
     private int freeThrowsMade;
     private int freeThrowsAttempted;
+    private String date;
+    private String firstName;
+    private String lastName;
 
-    public Points(int freeThrowsMade, int freeThrowsAttempted) {
+    public Points(String firstName, String lastName, String date, int freeThrowsMade, int freeThrowsAttempted) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.date = date;
         this.freeThrowsMade = freeThrowsMade;
         this.freeThrowsAttempted = freeThrowsAttempted;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public String getDate() {
+        return date;
     }
 
     public int getFreeThrowsMade() {
         return freeThrowsMade;
     }
 
-    public void setFreeThrowsMade(int freeThrowsMade) {
-        this.freeThrowsMade = freeThrowsMade;
-    }
-
     public int getFreeThrowsAttempted() {
         return freeThrowsAttempted;
+    }
+
+    public void setFreeThrowsMade(int freeThrowsMade) {
+        this.freeThrowsMade = freeThrowsMade;
     }
 
     public void setFreeThrowsAttempted(int freeThrowsAttempted) {
@@ -32,43 +50,14 @@ public class Points {
 
     public double getFreeThrowSuccessRate() {
         if (freeThrowsAttempted == 0) return 0;
-        return ((double) freeThrowsMade / freeThrowsAttempted) * 100;
+        
+        return Math.round(((double)freeThrowsAttempted / freeThrowsMade) * 100);
     }
 
-    public class threePointShot {
-        private int threePointersMade;
-        private int threePointersAttempted;
-
-        public threePointShot(int threePointersMade, int threePointersAttempted) {
-            this.threePointersMade = threePointersMade;
-            this.threePointersAttempted = threePointersAttempted;
-        }
-
-        public int getThreePointersMade() {
-            return threePointersMade;
-        }
-
-        public void setThreePointersMade(int threePointersMade) {
-            this.threePointersMade = threePointersMade;
-        }
-
-        public int getThreePointersAttempted() {
-            return threePointersAttempted;
-        }
-
-        public void setThreePointersAttempted(int threePointersAttempted) {
-            this.threePointersAttempted = threePointersAttempted;
-        }
-
-        public void updateThreePointStats(int made, int attempted) {
-            this.threePointersMade += made;
-            this.threePointersAttempted += attempted;
-        }
-
-        public double getThreePointSuccessRate() {
-            if (threePointersAttempted == 0) return 0;
-            return ((double) threePointersMade / threePointersAttempted) * 100;
-        }
+    @Override
+    public String toString()
+    {
+        return "Name: " + firstName + " " + lastName + " | Date: " + date + " | Free Throws Made: " + freeThrowsMade + " | Free Throws Attempted: " + freeThrowsAttempted + " | Free Throw Success Rate: " + getFreeThrowSuccessRate() + "%";
     }
 }
 
