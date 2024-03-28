@@ -7,7 +7,14 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.sql.*;
 
-
+/**
+ * This class creates a GUI that allows the user to input data for a basketball team roster, this
+ * can include the first name, last name, position, player number, and graduation year. The user can
+ * also add three point session, archive a player, or add a free throw session. The user can also increase
+ * or decrease the font size on any tab.
+ * 
+ * Authors: Jeffery Eisenhardt, Christine Colvin
+ */
 public class BasketballTeamRosterGUI extends JFrame {
 
     private ArrayList<Player> players;
@@ -108,7 +115,7 @@ public class BasketballTeamRosterGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Font currentFont = firstNameField.getFont();
-                Font newFont = currentFont.deriveFont(currentFont.getSize() + 10f);
+                Font newFont = currentFont.deriveFont(currentFont.getSize() + 5f);
                 setFontSize(newFont);
             }
         });
@@ -117,10 +124,11 @@ public class BasketballTeamRosterGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Font currentFont = firstNameField.getFont();
-                Font newFont = currentFont.deriveFont(currentFont.getSize() - 2f);
+                Font newFont = currentFont.deriveFont(currentFont.getSize() - 5f);
                 setFontSize(newFont);
             }
         });
+        
         sortingComboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -207,46 +215,6 @@ public class BasketballTeamRosterGUI extends JFrame {
         graduationYearField.setText("");
     }
 
-    // private void loadPlayersFromDatabase() {
-    //     try {
-    //         Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/MoravianWomensTeam24", "project", "project");
-    //         Statement statement = connection.createStatement();
-    //         ResultSet resultSet = statement.executeQuery("SELECT * FROM players");
-    //         while (resultSet.next()) {
-    //             String firstName = resultSet.getString("firstName");
-    //             String lastName = resultSet.getString("lastName");
-    //             String position = resultSet.getString("position");
-    //             int playerNumber = resultSet.getInt("playerNumber");
-    //             int graduationYear = resultSet.getInt("graduationYear");
-    //             int freeThrowsAttempted = resultSet.getInt("freeThrowsAttempted");
-    //             int freeThrowsMade = resultSet.getInt("freeThrowsMade");
-    //             players.add(new Player(firstName, lastName, position, playerNumber, graduationYear));
-    //         }
-    //         resultSet.close();
-    //         statement.close();
-    //         updateListModel();
-    //     } catch (SQLException e) {
-    //         e.printStackTrace();
-    //         JOptionPane.showMessageDialog(this, "Failed to load players from database: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-    //     }
-    // }
-
-    // private void archivePlayer(Player player) {
-    //     try {
-    //         Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/MoravianWomensTeam24", "project", "project");
-    //         String sql = "UPDATE players SET archived = ? WHERE firstName = ? AND lastName = ?";
-    //         PreparedStatement statement = connection.prepareStatement(sql);
-    //         statement.setBoolean(1, true);
-    //         statement.setString(2, player.getFirstName());
-    //         statement.setString(3, player.getlastName());
-    //         statement.executeUpdate();
-    //         statement.close();
-    //     } catch (SQLException e) {
-    //         e.printStackTrace();
-    //         JOptionPane.showMessageDialog(this, "Failed to archive player: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-    //     }
-    // }
-
     private void sortPlayersByLastName() {
         Collections.sort(players, Comparator.comparing(Player::getlastName));
         updateListModel();
@@ -272,8 +240,8 @@ public class BasketballTeamRosterGUI extends JFrame {
     }
 
     private void setFontSize(Font font) { // Method to set font size
-        firstNameField.setText("");
-        lastNameField.setText("");
+        firstNameField.setFont(font);
+        lastNameField.setFont(font);
         positionField.setFont(font);
         playerNumberField.setFont(font);
         graduationYearField.setFont(font);

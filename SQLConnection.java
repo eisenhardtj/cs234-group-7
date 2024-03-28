@@ -9,6 +9,13 @@ import javax.swing.JTextField;
 
 import java.sql.Array;
 
+/**
+ * Series of back-end methods that connect to the database and retrieve or modify 
+ * data from the database's tables. The methods in this class are also used to keep 
+ * the data inserted on the program persistent.
+ * 
+ * Author: Cole Aydelotte
+ */
 public class SQLConnection
 {
     Connection connection = null;
@@ -48,7 +55,7 @@ public class SQLConnection
         }
     }
 
-    public ArrayList<String[]> dataToArrayList()
+    public ArrayList<String[]> dataToArrayListTeamRoster()
     {
         ArrayList<String[]> players = new ArrayList<>();
         connection = openConnection();
@@ -78,6 +85,120 @@ public class SQLConnection
         {
             e.printStackTrace();
             System.out.println("\nFailed to load the TeamRoster table.");
+        }
+        finally
+        {
+            closeConnection(connection);
+        }
+        return null;
+    }
+
+    public ArrayList<String[]> dataToArrayListArchivePlayers()
+    {
+        ArrayList<String[]> archivedPlayers = new ArrayList<>();
+        connection = openConnection();
+        try
+        {
+            ResultSet rs = connection.getMetaData().getTables(null, null, "TeamRoster", null);
+            while (rs.next()) 
+            {
+                PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM archiveplayers;");
+                ResultSet tableResultSet = preparedStatement.executeQuery();
+                while (tableResultSet.next()) 
+                {
+                    String firstName = tableResultSet.getString("first_name");
+                    String lastName = tableResultSet.getString("last_name");
+                    int playerNum = tableResultSet.getInt("player_number");
+                    String playerPosition = tableResultSet.getString("position");
+                    int gradYear = tableResultSet.getInt("expected_graduation_date");
+
+                    String[] archivedPlayerStat = {firstName, lastName, Integer.toString(playerNum), playerPosition, Integer.toString(gradYear)};
+                    archivedPlayers.add(archivedPlayerStat);
+                }
+                preparedStatement.close();
+            }
+            return archivedPlayers;
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+            System.out.println("\nFailed to load the TeamRoster table.");
+        }
+        finally
+        {
+            closeConnection(connection);
+        }
+        return null;
+    }
+
+    public ArrayList<String[]> dataToArrayListThreePoints()
+    {
+        ArrayList<String[]> threePointSessions = new ArrayList<>();
+        connection = openConnection();
+        try
+        {
+            ResultSet rs = connection.getMetaData().getTables(null, null, "threepointshots", null);
+            while (rs.next()) 
+            {
+                PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM threepointshots;");
+                ResultSet tableResultSet = preparedStatement.executeQuery();
+                while (tableResultSet.next()) 
+                {
+                    String firstName = tableResultSet.getString("first_name");
+                    String lastName = tableResultSet.getString("last_name");
+                    String date = tableResultSet.getString("date");
+                    int made = tableResultSet.getInt("made");
+                    int attempted = tableResultSet.getInt("attempted");
+
+                    String[] playerStat = {firstName, lastName, date, Integer.toString(attempted), Integer.toString(made)};
+                    threePointSessions.add(playerStat);
+                }
+                preparedStatement.close();
+            }
+            return threePointSessions;
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+            System.out.println("\nFailed to load the threepoints table.");
+        }
+        finally
+        {
+            closeConnection(connection);
+        }
+        return null;
+    }
+
+    public ArrayList<String[]> dataToArrayListFreeThrows()
+    {
+        ArrayList<String[]> freeThrowSessions = new ArrayList<>();
+        connection = openConnection();
+        try
+        {
+            ResultSet rs = connection.getMetaData().getTables(null, null, "threepointshots", null);
+            while (rs.next()) 
+            {
+                PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM freethrows;");
+                ResultSet tableResultSet = preparedStatement.executeQuery();
+                while (tableResultSet.next()) 
+                {
+                    String firstName = tableResultSet.getString("first_name");
+                    String lastName = tableResultSet.getString("last_name");
+                    String date = tableResultSet.getString("date");
+                    int made = tableResultSet.getInt("made");
+                    int attempted = tableResultSet.getInt("attempted");
+
+                    String[] sessionStat = {firstName, lastName, date, Integer.toString(attempted), Integer.toString(made)};
+                   freeThrowSessions.add(sessionStat);
+                }
+                preparedStatement.close();
+            }
+            return freeThrowSessions;
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+            System.out.println("\nFailed to load the freethrows table.");
         }
         finally
         {
@@ -213,6 +334,105 @@ public class SQLConnection
         {
             e.printStackTrace();
             System.out.println("\nFailed to edit the values for the current player " + firstName + ", " + lastName + ".");
+        }
+        finally
+        {
+            closeConnection(connection);
+        }
+    }
+
+    public void editSession(String originalFirstName, String originalLastName, String firstName, String lastName, String date, int attempted, int made, String typeOfSession)
+    {
+        connection = openConnection();
+        try
+        {
+            String sql = "UPDATE " + typeOfSession + " SET first_name = ?, last_name = ?, date = ?, made = ?, attempted = ? WHERE first_name = ? AND last_name = ?;";
+            PreparedStatement editStatement = connection.prepareStatement(sql);
+            editStatement.setString(1, firstName);
+            editStatement.setString(2, lastName);
+            editStatement.setString(3, date);
+            editStatement.setInt(4, made);
+            editStatement.setInt(5, attempted);
+            editStatement.setString(6, originalFirstName);
+            editStatement.setString(7, originalLastName);
+
+            int rowsAffected = editStatement.executeUpdate();
+            if(rowsAffected == 0)
+            {
+                System.out.println("No rows affected.");
+            }
+            else
+            {
+                System.out.println(rowsAffected + " rows affected.");
+                System.out.println("Edited player " + firstName + " " + lastName + " to new values.");
+            }
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+            System.out.println("\nFailed to edit the values for the current player " + firstName + ", " + lastName + ".");
+        }
+        finally
+        {
+            closeConnection(connection);
+        }
+    }
+
+    public void addFreeThrow(String firstName, String lastName, String date, int attempted, int made)
+    {
+        connection = openConnection();
+        try
+        {
+            String sql = "INSERT INTO freethrows (first_name, last_name, date, made, attempted) VALUES (?, ?, ?, ?, ?);";
+            PreparedStatement addStatement = connection.prepareStatement(sql);
+
+            addStatement.setString(1, firstName);
+            addStatement.setString(2, lastName);
+            addStatement.setString(3, date);
+            addStatement.setInt(4, made);
+            addStatement.setInt(5, attempted);
+
+            addStatement.executeUpdate();
+            
+            addStatement.close();
+
+            System.out.println("Added " + firstName + ", " + lastName + " to freethrows table.");
+        }
+        catch (SQLException e) 
+        {
+            e.printStackTrace();
+            System.out.println("\nFailed to add player to database.");
+        }
+        finally
+        {
+            closeConnection(connection);
+        }
+    }
+
+    public void addThreePoint(String firstName, String lastName, String date, int attempted, int made)
+    {
+        connection = openConnection();
+        try
+        {
+            String sql = "INSERT INTO threepointshots (first_name, last_name, date, made, attempted) VALUES (?, ?, ?, ?, ?);";
+            PreparedStatement addStatement = connection.prepareStatement(sql);
+
+            addStatement.setString(1, firstName);
+            addStatement.setString(2, lastName);
+            addStatement.setString(3, date);
+            addStatement.setInt(4, made);
+            addStatement.setInt(5, attempted);
+
+            addStatement.executeUpdate();
+            
+            addStatement.close();
+
+            System.out.println("Added " + firstName + ", " + lastName + " to threepointshots table.");
+        }
+        catch (SQLException e) 
+        {
+            e.printStackTrace();
+            System.out.println("\nFailed to add player to database.");
         }
         finally
         {
