@@ -86,7 +86,7 @@ public class ArchivedPanel extends JPanel
     private void repopulateLists()
     {
         ArrayList<String[]> data;
-        data = conn.dataToArrayListTeamRoster();
+        data = conn.dataToArrayListArchivePlayers();
         for(int x = 0; x < data.size(); x++)
         {
             String[] player = data.get(x);
