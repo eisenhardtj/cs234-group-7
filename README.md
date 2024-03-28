@@ -57,6 +57,6 @@ then run the command:
 mysql -u project -p < dumpfiles/dump.sql
 ```
 
-## Fourth Step
+## Sixth Step
 
 After opening the repository, you have to run BasketballTeamRosterGUI.java file to run the program.
