@@ -25,7 +25,7 @@ public class SQLConnection
      */
     public Connection openConnection()
     {
-        String url = "jdbc:mysql://localhost:3306/MoravianWomensTeam24";
+        String url = "jdbc:mysql://localhost:3306/moravianwomensteam24";
         String user = "project";
         String password = "project";
         try
