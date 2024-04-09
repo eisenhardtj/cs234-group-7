@@ -21,7 +21,7 @@ public class SQLConnection
      */
     public Connection openConnection()
     {
-        String url = "jdbc:mysql://localhost:3306/MoravianWomensTeam24";
+        String url = "jdbc:mysql://localhost:3306/moravianwomensteam24";
         String user = "project";
         String password = "project";
         try
@@ -279,32 +279,37 @@ public class SQLConnection
         }
     }
 
-    public void removePlayer(String firstName, String lastName)
-    {
+    //Implement remove player function for archive players table/tab
+    public void removePlayer(String firstName, String lastName) {
         PreparedStatement removeQuery;
-        connection = openConnection();
-        try
-        {
+        Connection connection = openConnection();
+        try {
+            if (connection == null) {
+                System.out.println("Failed to establish database connection.");
+                return;
+            }
+
             String sql = "DELETE FROM TeamRoster WHERE first_name = ? AND last_name = ?;";
             removeQuery = connection.prepareStatement(sql);
             removeQuery.setString(1, firstName);
             removeQuery.setString(2, lastName);
-            removeQuery.executeUpdate();
+            int rowsAffected = removeQuery.executeUpdate();
             removeQuery.close();
-            
-            System.out.println("Removed " + firstName + ", " + lastName + " from the roster.");
 
-        }
-        catch (SQLException e) 
-        {
+            if (rowsAffected > 0) {
+                System.out.println("Removed " + firstName + ", " + lastName + " from the roster.");
+            } else {
+                System.out.println("No matching player found in the roster.");
+            }
+
+        } catch (SQLException e) {
             e.printStackTrace();
             System.out.println("\nFailed to remove player from database.");
-        }
-        finally
-        {
+        } finally {
             closeConnection(connection);
         }
     }
+
 
     public void editPlayer(String originalFirstName, String originalLastName, String firstName, String lastName, int number, String position, int gradYear)
     {

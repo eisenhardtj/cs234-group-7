@@ -24,7 +24,7 @@ public class ArchivedPanel extends JPanel
     private JList<Player> archivedPlayerList;
     private ArrayList<Player> archivedPlayersList;
     private JPanel buttonPanel;
-    private JButton increaseFontSizeButton, decreaseFontSizeButton;
+    private JButton increaseFontSizeButton, decreaseFontSizeButton, deletePlayerButton;
     private SQLConnection conn = new SQLConnection();
 
     public ArchivedPanel()
@@ -36,9 +36,11 @@ public class ArchivedPanel extends JPanel
 
         increaseFontSizeButton = new JButton("Increase Font Size");
         decreaseFontSizeButton = new JButton("Decrease Font Size");
+        deletePlayerButton = new JButton("Delete Player");
 
         buttonPanel.add(increaseFontSizeButton);
         buttonPanel.add(decreaseFontSizeButton);
+        buttonPanel.add(deletePlayerButton);
 
         JScrollPane scrollPane = new JScrollPane(archivedPlayerList);
         setLayout(new BorderLayout());
@@ -64,6 +66,18 @@ public class ArchivedPanel extends JPanel
                 Font currentFont = archivedPlayerList.getFont();
                 Font newFont = currentFont.deriveFont(currentFont.getSize() - 5f);
                 setFontSize(newFont);
+            }
+        });
+
+        deletePlayerButton.addActionListener(new ActionListener() 
+        { 
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Player player = archivedPlayerList.getSelectedValue();
+                archivedPlayersList.remove(player);
+                System.out.println(player);
+                conn.removePlayer(player.getFirstName(), player.getLastName());
+                updateListModel();
             }
         });
     }

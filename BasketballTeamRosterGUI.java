@@ -27,7 +27,6 @@ public class BasketballTeamRosterGUI extends JFrame {
     private JButton addButton, archiveButton, editButton;
     private JComboBox<String> sortingComboBox; // Added JComboBox for sorting methods
     private Player selectedPlayer;
-    private Font defaultFont; // Added default font to store original font
     SQLConnection conn;
     private ArchivedPanel archivedPanel;
     private FreeThrowPanel freeThrowPanel;
@@ -55,7 +54,7 @@ public class BasketballTeamRosterGUI extends JFrame {
         increaseFontSizeButton = new JButton("Increase Font Size"); // Initialized the button
         decreaseFontSizeButton = new JButton("Decrease Font Size"); // Initialized the button
         sortingComboBox = new JComboBox<>(new String[]{"Sort by Last Name", "Sort by Player Number"}); // Initialized JComboBox
-        defaultFont = firstNameField.getFont(); // Storing the default font
+        firstNameField.getFont();
         conn = new SQLConnection();
         archivedPanel = new ArchivedPanel();
         freeThrowPanel = new FreeThrowPanel();
@@ -101,7 +100,7 @@ public class BasketballTeamRosterGUI extends JFrame {
                 {
                     archivedPanel.addToListModel(players.get(selectedIndex));
                     String firstName = players.get(selectedIndex).getFirstName();
-                    String lastName = players.get(selectedIndex).getlastName();
+                    String lastName = players.get(selectedIndex).getLastName();
                     players.remove(selectedIndex);
                     listModel.remove(selectedIndex);
                     conn.archivePlayer(firstName, lastName);
@@ -123,7 +122,7 @@ public class BasketballTeamRosterGUI extends JFrame {
                     selectedPlayer.setPlayerNumber(Integer.parseInt(playerNumberField.getText()));
                     selectedPlayer.setGraduationYear(Integer.parseInt(graduationYearField.getText()));
                     listModel.set(playerList.getSelectedIndex(), selectedPlayer);
-                    conn.editPlayer(selectedPlayer.getFirstName(), selectedPlayer.getlastName(), firstNameField.getText(), lastNameField.getText(), Integer.parseInt(playerNumberField.getText()), positionField.getText(), Integer.parseInt(graduationYearField.getText()));
+                    conn.editPlayer(selectedPlayer.getFirstName(), selectedPlayer.getLastName(), firstNameField.getText(), lastNameField.getText(), Integer.parseInt(playerNumberField.getText()), positionField.getText(), Integer.parseInt(graduationYearField.getText()));
                 }
                 clearFields();
             }
@@ -165,7 +164,7 @@ public class BasketballTeamRosterGUI extends JFrame {
             selectedPlayer = playerList.getSelectedValue();
             if (selectedPlayer != null) {
                 firstNameField.setText(selectedPlayer.getFirstName());
-                lastNameField.setText(selectedPlayer.getlastName());
+                lastNameField.setText(selectedPlayer.getLastName());
                 positionField.setText(selectedPlayer.getPosition());
                 playerNumberField.setText(String.valueOf(selectedPlayer.getPlayerNumber()));
                 graduationYearField.setText(String.valueOf(selectedPlayer.getGraduationYear()));
@@ -262,7 +261,7 @@ public class BasketballTeamRosterGUI extends JFrame {
     }
 
     private void sortPlayersByLastName() {
-        Collections.sort(players, Comparator.comparing(Player::getlastName));
+        Collections.sort(players, Comparator.comparing(Player::getLastName));
         updateListModel();
     }
 
