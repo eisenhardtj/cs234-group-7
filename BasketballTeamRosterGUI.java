@@ -33,6 +33,12 @@ public class BasketballTeamRosterGUI extends JFrame {
     private FreeThrowPanel freeThrowPanel;
     private ThreePointPanel threePointPanel;
 
+    
+
+
+     // Added closing curly brace to complete the block
+
+
     public BasketballTeamRosterGUI() {
         super("Moravian Woman's Basketball Team Roster");
         players = new ArrayList<>();
@@ -56,8 +62,15 @@ public class BasketballTeamRosterGUI extends JFrame {
         threePointPanel = new ThreePointPanel();
 
 
+
         
         repopulateLists();
+        
+        
+        
+        
+
+        
 
         // Action listener for the add, remove, edit, increase font size and decrease font size buttons
 
@@ -77,6 +90,9 @@ public class BasketballTeamRosterGUI extends JFrame {
             }
         });
 
+
+        
+
         archiveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -93,6 +109,8 @@ public class BasketballTeamRosterGUI extends JFrame {
                 }
             }
         });
+
+        
 
         
         editButton.addActionListener(new ActionListener() {
@@ -198,6 +216,33 @@ public class BasketballTeamRosterGUI extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
 
+        JPanel columnPanel = new JPanel(new GridLayout(0, 5)); // 5 columns for first name, last name, position, player number, graduation year
+
+        // Add labels for column headers
+        columnPanel.add(new JLabel("First Name"));
+        columnPanel.add(new JLabel("Last Name"));
+        columnPanel.add(new JLabel("Position"));
+        columnPanel.add(new JLabel("Player Number"));
+        columnPanel.add(new JLabel("Graduation Year"));
+
+        // Add player information dynamically
+        for (Player player : players) {
+            columnPanel.add(new JLabel(player.getFirstName()));
+            columnPanel.add(new JLabel(player.getlastName()));
+            columnPanel.add(new JLabel(player.getPosition()));
+            columnPanel.add(new JLabel(String.valueOf(player.getPlayerNumber())));
+            columnPanel.add(new JLabel(String.valueOf(player.getGraduationYear())));
+        }
+
+        // Add the column panel to a scroll pane
+        JScrollPane columnScrollPane = new JScrollPane(columnPanel);
+
+        // Add the column scroll pane to the main panel
+        mainPanel.add(columnScrollPane, BorderLayout.NORTH);
+
+
+        
+
         // mainPanel.add(tabbedPane);
     }
 
@@ -206,6 +251,7 @@ public class BasketballTeamRosterGUI extends JFrame {
         textField.setPreferredSize(new Dimension(textField.getPreferredSize().width, 20)); // Set preferred height
         return textField;
     }
+
 
     private void clearFields() {
         firstNameField.setText("");
@@ -224,6 +270,8 @@ public class BasketballTeamRosterGUI extends JFrame {
         Collections.sort(players, Comparator.comparingInt(Player::getPlayerNumber));
         updateListModel();
     }
+    
+    
 
     private void removeFromArrayList(Player player) 
     {
@@ -260,6 +308,8 @@ public class BasketballTeamRosterGUI extends JFrame {
             listModel.addElement(newPlayer);
         }
     }
+    
+    
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -268,5 +318,15 @@ public class BasketballTeamRosterGUI extends JFrame {
                 new BasketballTeamRosterGUI();
             }
         });
+        
     }
+    
+    
 }
+
+
+
+
+
+
+

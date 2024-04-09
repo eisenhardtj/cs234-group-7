@@ -5,10 +5,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import javax.swing.JTextField;
-
-import java.sql.Array;
-
 /**
  * Series of back-end methods that connect to the database and retrieve or modify 
  * data from the database's tables. The methods in this class are also used to keep 
