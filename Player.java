@@ -23,7 +23,7 @@ public class Player {
         return firstName;
     }
 
-    public String getlastName() {
+    public String getLastName() {
         return lastName;
     }
 
