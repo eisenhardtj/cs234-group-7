@@ -27,7 +27,6 @@ public class BasketballTeamRosterGUI extends JFrame {
     private JButton addButton, archiveButton, editButton;
     private JComboBox<String> sortingComboBox; // Added JComboBox for sorting methods
     private Player selectedPlayer;
-    private Font defaultFont; // Added default font to store original font
     SQLConnection conn;
     private ArchivedPanel archivedPanel;
     private FreeThrowPanel freeThrowPanel;
@@ -49,7 +48,7 @@ public class BasketballTeamRosterGUI extends JFrame {
         increaseFontSizeButton = new JButton("Increase Font Size"); // Initialized the button
         decreaseFontSizeButton = new JButton("Decrease Font Size"); // Initialized the button
         sortingComboBox = new JComboBox<>(new String[]{"Sort by Last Name", "Sort by Player Number"}); // Initialized JComboBox
-        defaultFont = firstNameField.getFont(); // Storing the default font
+        firstNameField.getFont();
         conn = new SQLConnection();
         archivedPanel = new ArchivedPanel();
         freeThrowPanel = new FreeThrowPanel();
@@ -199,12 +198,6 @@ public class BasketballTeamRosterGUI extends JFrame {
         setVisible(true);
 
         // mainPanel.add(tabbedPane);
-    }
-
-    private JTextField createTextField(int columns) {
-        JTextField textField = new JTextField(columns);
-        textField.setPreferredSize(new Dimension(textField.getPreferredSize().width, 20)); // Set preferred height
-        return textField;
     }
 
     private void clearFields() {
