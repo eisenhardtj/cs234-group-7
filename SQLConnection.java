@@ -283,6 +283,7 @@ public class SQLConnection
         }
     }
 
+    //Implement remove player function for archive players table/tab
     public void removePlayer(String firstName, String lastName) {
         PreparedStatement removeQuery;
         Connection connection = openConnection();
