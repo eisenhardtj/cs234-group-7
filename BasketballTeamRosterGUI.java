@@ -227,7 +227,7 @@ public class BasketballTeamRosterGUI extends JFrame {
         // Add player information dynamically
         for (Player player : players) {
             columnPanel.add(new JLabel(player.getFirstName()));
-            columnPanel.add(new JLabel(player.getlastName()));
+            columnPanel.add(new JLabel(player.getLastName()));
             columnPanel.add(new JLabel(player.getPosition()));
             columnPanel.add(new JLabel(String.valueOf(player.getPlayerNumber())));
             columnPanel.add(new JLabel(String.valueOf(player.getGraduationYear())));
