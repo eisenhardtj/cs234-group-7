@@ -76,7 +76,7 @@ public class ArchivedPanel extends JPanel
                 Player player = archivedPlayerList.getSelectedValue();
                 archivedPlayersList.remove(player);
                 System.out.println(player);
-                conn.removePlayer(player.getFirstName(), player.getLastName());
+                conn.removePlayerArchive(player.getFirstName(), player.getLastName());
                 updateListModel();
             }
         });
