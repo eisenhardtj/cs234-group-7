@@ -108,8 +108,9 @@ public class PersistData
                     String date = tableResultSet.getString("date");
                     int made = tableResultSet.getInt("made");
                     int attempted = tableResultSet.getInt("attempted");
+                    String location = tableResultSet.getString("location");
 
-                    String[] playerStat = {firstName, lastName, date, Integer.toString(attempted), Integer.toString(made)};
+                    String[] playerStat = {firstName, lastName, date, Integer.toString(attempted), Integer.toString(made), location};
                     threePointSessions.add(playerStat);
                 }
                 preparedStatement.close();
