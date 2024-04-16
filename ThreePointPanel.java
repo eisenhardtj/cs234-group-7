@@ -37,7 +37,7 @@ public class ThreePointPanel extends JPanel
     private ArrayList<Points> threePointShotsList;
     private JComboBox<String> sortingComboBox;
     private JButton addPointCheckButton, increaseFontSizeButton, decreaseFontSizeButton, editSessionButton;
-    private JTextField firstNameField, lastNameField, dateField, attemptedField, madeField;
+    private JTextField firstNameField, lastNameField, dateField, attemptedField, madeField, locaField;
     private JPanel inputPanel;
     private Points selectedSession;
     private SQLConnection conn = new SQLConnection();
@@ -78,6 +78,7 @@ public class ThreePointPanel extends JPanel
         dateField = new JTextField(15);
         attemptedField = new JTextField(15);
         madeField = new JTextField(15);
+        locaField = new JTextField(15);
 
         inputPanel.add(new JLabel("First Name:"));
         inputPanel.add(firstNameField);
@@ -89,6 +90,8 @@ public class ThreePointPanel extends JPanel
         inputPanel.add(attemptedField);
         inputPanel.add(new JLabel("Made:"));
         inputPanel.add(madeField);
+        inputPanel.add(new JLabel("Location:"));
+        inputPanel.add(locaField);
         inputPanel.add(new JLabel("Sort By:"));
         inputPanel.add(sortingComboBox);
 
@@ -210,6 +213,7 @@ public class ThreePointPanel extends JPanel
         dateField.setText("");
         attemptedField.setText("");
         madeField.setText("");
+        locaField.setText("");
     }
 
     private void setFontSize(Font font) {
@@ -219,6 +223,7 @@ public class ThreePointPanel extends JPanel
         attemptedField.setFont(font);
         madeField.setFont(font);
         threePointList.setFont(font);
+        locaField.setFont(font);
     }
     private void setColumnWidths(TableColumnModel columnModel, int[] widths) {
         for (int i = 0; i < widths.length; i++) {
