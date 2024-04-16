@@ -13,7 +13,11 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
+
 
 /**
  * This class creates a panel that allows the user to input data for a three point session. 
@@ -38,9 +42,27 @@ public class ThreePointPanel extends JPanel
     private Points selectedSession;
     private SQLConnection conn = new SQLConnection();
     private PersistData persistData = new PersistData();
+    private DefaultTableModel tableModel;
+    private JTable threePointTable;
+
+
 
     public ThreePointPanel()
     {
+        tableModel = new DefaultTableModel();
+        tableModel.addColumn("First Name");
+        tableModel.addColumn("Last Name");
+        tableModel.addColumn("Date");
+        tableModel.addColumn("Attempted");
+        tableModel.addColumn("Made");
+
+        threePointTable = new JTable(tableModel);
+        threePointTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); // Set to OFF to control column widths
+
+        // Set preferred column widths
+        int[] columnWidths = {325, 325, 325, 325, 325}; // Adjust as needed
+        setColumnWidths(threePointTable.getColumnModel(), columnWidths);
+
         buttonPanel = new JPanel();
         threePointListModel = new DefaultListModel<>();
         threePointList = new JList<>(threePointListModel);
@@ -197,5 +219,10 @@ public class ThreePointPanel extends JPanel
         attemptedField.setFont(font);
         madeField.setFont(font);
         threePointList.setFont(font);
+    }
+    private void setColumnWidths(TableColumnModel columnModel, int[] widths) {
+        for (int i = 0; i < widths.length; i++) {
+            columnModel.getColumn(i).setPreferredWidth(widths[i]);
+        }
     }
 }
