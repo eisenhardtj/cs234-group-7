@@ -34,9 +34,10 @@ public class ThreePointPanel extends JPanel
     private JComboBox<String> sortingComboBox;
     private JButton addPointCheckButton, increaseFontSizeButton, decreaseFontSizeButton, editSessionButton;
     private JTextField firstNameField, lastNameField, dateField, attemptedField, madeField;
-    JPanel inputPanel;
-    Points selectedSession;
-    SQLConnection conn = new SQLConnection();
+    private JPanel inputPanel;
+    private Points selectedSession;
+    private SQLConnection conn = new SQLConnection();
+    private PersistData persistData = new PersistData();
 
     public ThreePointPanel()
     {
@@ -170,7 +171,7 @@ public class ThreePointPanel extends JPanel
     private void repopulateLists()
     {
         ArrayList<String[]> data;
-        data = conn.dataToArrayListThreePoints();
+        data = persistData.dataToArrayListThreePoints();
         for(int x = 0; x < data.size(); x++)
         {
             String[] pointData = data.get(x);

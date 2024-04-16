@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.sql.*;
 
 /**
  * This class creates a GUI that allows the user to input data for a basketball team roster, this
@@ -22,21 +21,18 @@ public class BasketballTeamRosterGUI extends JFrame {
     
     private JList<Player> playerList;
     private JTextField firstNameField, lastNameField, positionField, playerNumberField, graduationYearField;
-    JButton increaseFontSizeButton;
-    JButton decreaseFontSizeButton;
+    private JButton increaseFontSizeButton;
+    private JButton decreaseFontSizeButton;
     private JButton addButton, archiveButton, editButton;
     private JComboBox<String> sortingComboBox; // Added JComboBox for sorting methods
     private Player selectedPlayer;
-    SQLConnection conn;
+    private SQLConnection conn;
     private ArchivedPanel archivedPanel;
     private FreeThrowPanel freeThrowPanel;
     private ThreePointPanel threePointPanel;
-
-    
-
+    private PersistData persistData;
 
      // Added closing curly brace to complete the block
-
 
     public BasketballTeamRosterGUI() {
         super("Moravian Woman's Basketball Team Roster");
@@ -59,16 +55,13 @@ public class BasketballTeamRosterGUI extends JFrame {
         archivedPanel = new ArchivedPanel();
         freeThrowPanel = new FreeThrowPanel();
         threePointPanel = new ThreePointPanel();
+        ChartPanel ChartPanel = new ChartPanel();
+        persistData = new PersistData();
 
 
 
         
         repopulateLists();
-        
-        
-        
-        
-
         
 
         // Action listener for the add, remove, edit, increase font size and decrease font size buttons
@@ -89,9 +82,6 @@ public class BasketballTeamRosterGUI extends JFrame {
             }
         });
 
-
-        
-
         archiveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -109,9 +99,6 @@ public class BasketballTeamRosterGUI extends JFrame {
             }
         });
 
-        
-
-        
         editButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -157,8 +144,6 @@ public class BasketballTeamRosterGUI extends JFrame {
                 }
             }
         });
-        
-
 
         playerList.addListSelectionListener(e -> {
             selectedPlayer = playerList.getSelectedValue();
@@ -185,7 +170,6 @@ public class BasketballTeamRosterGUI extends JFrame {
         inputPanel.add(graduationYearField);
         inputPanel.add(new JLabel("Sort By:")); // Added label for sorting combo box
         inputPanel.add(sortingComboBox); // Added sorting combo box
-        
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         buttonPanel.add(addButton); // Added button to add player
@@ -207,6 +191,7 @@ public class BasketballTeamRosterGUI extends JFrame {
         tabbedPane.addTab("Archived Players", archivedPanel); 
         tabbedPane.addTab("Free Throws", freeThrowPanel);
         tabbedPane.addTab("Three Pointers", threePointPanel);
+        tabbedPane.addTab("Statistices", ChartPanel);
     
         // getContentPane().add(tabbedPane);
         setContentPane(tabbedPane);
@@ -238,11 +223,6 @@ public class BasketballTeamRosterGUI extends JFrame {
 
         // Add the column scroll pane to the main panel
         mainPanel.add(columnScrollPane, BorderLayout.NORTH);
-
-
-        
-
-        // mainPanel.add(tabbedPane);
     }
 
     private JTextField createTextField(int columns) {
@@ -250,7 +230,6 @@ public class BasketballTeamRosterGUI extends JFrame {
         textField.setPreferredSize(new Dimension(textField.getPreferredSize().width, 20)); // Set preferred height
         return textField;
     }
-
 
     private void clearFields() {
         firstNameField.setText("");
@@ -268,16 +247,7 @@ public class BasketballTeamRosterGUI extends JFrame {
     private void sortPlayersByPlayerNumber() {
         Collections.sort(players, Comparator.comparingInt(Player::getPlayerNumber));
         updateListModel();
-    }
-    
-    
-
-    private void removeFromArrayList(Player player) 
-    {
-        players.remove(player);
-        updateListModel();
-    }
-    
+    } 
 
     private void updateListModel() {
         listModel.clear();
@@ -298,7 +268,7 @@ public class BasketballTeamRosterGUI extends JFrame {
     private void repopulateLists()
     {
         ArrayList<String[]> data;
-        data = conn.dataToArrayListTeamRoster();
+        data = persistData.dataToArrayListTeamRoster();
         for(int x = 0; x < data.size(); x++)
         {
             String[] player = data.get(x);
@@ -307,8 +277,6 @@ public class BasketballTeamRosterGUI extends JFrame {
             listModel.addElement(newPlayer);
         }
     }
-    
-    
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {

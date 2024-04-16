@@ -26,6 +26,7 @@ public class ArchivedPanel extends JPanel
     private JPanel buttonPanel;
     private JButton increaseFontSizeButton, decreaseFontSizeButton, deletePlayerButton;
     private SQLConnection conn = new SQLConnection();
+    private PersistData persistData = new PersistData();
 
     public ArchivedPanel()
     {
@@ -100,7 +101,7 @@ public class ArchivedPanel extends JPanel
     private void repopulateLists()
     {
         ArrayList<String[]> data;
-        data = conn.dataToArrayListArchivePlayers();
+        data = persistData.dataToArrayListArchivePlayers();
         for(int x = 0; x < data.size(); x++)
         {
             String[] player = data.get(x);
