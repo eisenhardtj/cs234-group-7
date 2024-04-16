@@ -28,14 +28,14 @@ import javax.swing.JTextField;
 public class ThreePointPanel extends JPanel
 {
     private JPanel buttonPanel;
-    private DefaultListModel<Points> threePointListModel;
-    private JList<Points> threePointList;
-    private ArrayList<Points> threePointShotsList;
+    private DefaultListModel<ThreePoint> threePointListModel;
+    private JList<ThreePoint> threePointList;
+    private ArrayList<ThreePoint> threePointShotsList;
     private JComboBox<String> sortingComboBox;
     private JButton addPointCheckButton, increaseFontSizeButton, decreaseFontSizeButton, editSessionButton;
     private JTextField firstNameField, lastNameField, dateField, attemptedField, madeField, locaField;
     private JPanel inputPanel;
-    private Points selectedSession;
+    private ThreePoint selectedSession;
     private SQLConnection conn = new SQLConnection();
     private PersistData persistData = new PersistData();
 
@@ -91,8 +91,8 @@ public class ThreePointPanel extends JPanel
             @Override
             public void actionPerformed(ActionEvent e)
             {
-            Points point = new Points(firstNameField.getText(), lastNameField.getText(), dateField.getText(), Integer.parseInt(attemptedField.getText()), Integer.parseInt(madeField.getText()));
-            conn.addThreePoint(firstNameField.getText(), lastNameField.getText(), dateField.getText(), Integer.parseInt(attemptedField.getText()), Integer.parseInt(madeField.getText()));
+            ThreePoint point = new ThreePoint(firstNameField.getText(), lastNameField.getText(), dateField.getText(), Integer.parseInt(attemptedField.getText()), Integer.parseInt(madeField.getText()), locaField.getText());
+            conn.addThreePoint(firstNameField.getText(), lastNameField.getText(), dateField.getText(), Integer.parseInt(attemptedField.getText()), Integer.parseInt(madeField.getText()), locaField.getText());
             threePointShotsList.add(point);
             updateListModel();
             }
@@ -105,8 +105,8 @@ public class ThreePointPanel extends JPanel
                 firstNameField.setText(selectedSession.getFirstName());
                 lastNameField.setText(selectedSession.getLastName());
                 dateField.setText(selectedSession.getDate());
-                attemptedField.setText(String.valueOf(selectedSession.getFreeThrowsAttempted()));
-                madeField.setText(String.valueOf(selectedSession.getFreeThrowsMade()));
+                attemptedField.setText(String.valueOf(selectedSession.getThreePointsAttempted()));
+                madeField.setText(String.valueOf(selectedSession.getThreePointsMade()));
             }
         });
 
@@ -119,8 +119,8 @@ public class ThreePointPanel extends JPanel
                     selectedSession.setFirstName(firstNameField.getText());
                     selectedSession.setLastName(lastNameField.getText());
                     selectedSession.setDate(dateField.getText());
-                    selectedSession.setFreeThrowsAttempted(Integer.parseInt(attemptedField.getText()));
-                    selectedSession.setFreeThrowsMade(Integer.parseInt(madeField.getText()));
+                    selectedSession.setThreePointsAttempted(Integer.parseInt(attemptedField.getText()));
+                    selectedSession.setThreePointsMade(Integer.parseInt(madeField.getText()));
                     threePointListModel.set(threePointList.getSelectedIndex(), selectedSession);
                     conn.editSession(selectedSession.getFirstName(), selectedSession.getLastName(), firstNameField.getText(), lastNameField.getText(), dateField.getText(), Integer.parseInt(attemptedField.getText()), Integer.parseInt(madeField.getText()), "threepointshots");
                 }
@@ -159,13 +159,13 @@ public class ThreePointPanel extends JPanel
     private void updateListModel()
     {
         threePointListModel.clear();
-        for (Points point : threePointShotsList) 
+        for (ThreePoint point : threePointShotsList) 
         {
             threePointListModel.addElement(point);
         }
     }
 
-    public void addToListModel(Points pointSession)
+    public void addToListModel(ThreePoint pointSession)
     {
         threePointShotsList.add(pointSession);
         updateListModel();
@@ -178,7 +178,7 @@ public class ThreePointPanel extends JPanel
         for(int x = 0; x < data.size(); x++)
         {
             String[] pointData = data.get(x);
-            Points point = new Points(pointData[0], pointData[1], pointData[2], Integer.parseInt(pointData[3]), Integer.parseInt(pointData[4]));
+            ThreePoint point = new ThreePoint(pointData[0], pointData[1], pointData[2], Integer.parseInt(pointData[3]), Integer.parseInt(pointData[4]), pointData[5]);
             threePointShotsList.add(point);
             threePointListModel.addElement(point);
         }
