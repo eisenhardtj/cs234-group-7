@@ -1,19 +1,13 @@
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -21,62 +15,35 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
-
-/**
- * This class creates a panel that allows the user to input data for a three point session. 
- * The user can input the first name, last name, date, number of three points attempted, 
- * and number of free throws made. The user can also sort the list of three point sessions 
- * by last name, points made, or date. The user can add a three point session to the list, 
- * increase the font size of the list, decrease the font size of the list, and edit a three 
- * point session.
- * 
- * Author: Cole Aydelotte
- */
-public class ThreePointPanel extends JPanel
-{
-    private JPanel buttonPanel;
-    private DefaultListModel<ThreePoint> threePointListModel;
-    private JList<ThreePoint> threePointList;
-    private ArrayList<ThreePoint> threePointShotsList;
+public class ThreePointPanel extends JPanel {
+    private DefaultTableModel tableModel;
+    private JTable threePointTable;
     private JComboBox<String> sortingComboBox;
-    private JButton addPointCheckButton, increaseFontSizeButton, decreaseFontSizeButton, editSessionButton;
     private JTextField firstNameField, lastNameField, dateField, attemptedField, madeField, locaField;
-    private JPanel inputPanel;
+    private JButton addPointCheckButton, increaseFontSizeButton, decreaseFontSizeButton, editSessionButton;
     private ThreePoint selectedSession;
     private SQLConnection conn = new SQLConnection();
     private PersistData persistData = new PersistData();
-    private DefaultTableModel tableModel;
-    private JTable threePointTable;
+    private ArrayList<ThreePoint> threePointShotsList;
 
-
-
-    public ThreePointPanel()
-    {
+    public ThreePointPanel() {
+        // Initialize table model and table
         tableModel = new DefaultTableModel();
         tableModel.addColumn("First Name");
         tableModel.addColumn("Last Name");
         tableModel.addColumn("Date");
         tableModel.addColumn("Attempted");
-        tableModel.addColumn("Location");
         tableModel.addColumn("Made");
+        tableModel.addColumn("Location");
 
         threePointTable = new JTable(tableModel);
         threePointTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); // Set to OFF to control column widths
 
         // Set preferred column widths
-        int[] columnWidths = {325, 325, 325, 325, 325}; // Adjust as needed
+        int[] columnWidths = {150, 150, 150, 150, 150, 150};
         setColumnWidths(threePointTable.getColumnModel(), columnWidths);
 
-        buttonPanel = new JPanel();
-        threePointListModel = new DefaultListModel<>();
-        threePointList = new JList<>(threePointListModel);
-        threePointShotsList = new ArrayList<>();
-
-        inputPanel = new JPanel();
-
-        inputPanel.setLayout(new GridLayout(10, 2));
-
-        sortingComboBox = new JComboBox<>(new String[]{"Sort by Last Name", "Sort by Points Made", "Sort by Date"});
+        // Initialize input fields
         firstNameField = new JTextField(15);
         lastNameField = new JTextField(15);
         dateField = new JTextField(15);
@@ -84,6 +51,16 @@ public class ThreePointPanel extends JPanel
         madeField = new JTextField(15);
         locaField = new JTextField(15);
 
+        // Initialize buttons and combo box
+        sortingComboBox = new JComboBox<>(new String[]{"Sort by Last Name", "Sort by Points Made", "Sort by Date"});
+        addPointCheckButton = new JButton("Add Three Point Check");
+        increaseFontSizeButton = new JButton("Increase Font Size");
+        decreaseFontSizeButton = new JButton("Decrease Font Size");
+        editSessionButton = new JButton("Edit Three Point Session");
+
+        // Initialize panel for input fields
+        JPanel inputPanel = new JPanel();
+        inputPanel.setLayout(new GridLayout(10, 2));
         inputPanel.add(new JLabel("First Name:"));
         inputPanel.add(firstNameField);
         inputPanel.add(new JLabel("Last Name:"));
@@ -99,188 +76,92 @@ public class ThreePointPanel extends JPanel
         inputPanel.add(new JLabel("Sort By:"));
         inputPanel.add(sortingComboBox);
 
-        addPointCheckButton = new JButton("Add Three Point Check");
-        increaseFontSizeButton = new JButton("Increase Font Size");
-        decreaseFontSizeButton = new JButton("Decrease Font Size");
-        editSessionButton = new JButton("Edit Three Point Session");
-
-        repopulateLists();
-
+        // Initialize button panel
+        JPanel buttonPanel = new JPanel();
         buttonPanel.add(addPointCheckButton);
         buttonPanel.add(increaseFontSizeButton);
         buttonPanel.add(decreaseFontSizeButton);
         buttonPanel.add(editSessionButton);
-        new FlowLayout(FlowLayout.CENTER);
 
-        addPointCheckButton.addActionListener(new ActionListener()
-        {
+        // Add action listeners
+        addPointCheckButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
-            ThreePoint point = new ThreePoint(firstNameField.getText(), lastNameField.getText(), dateField.getText(), Integer.parseInt(attemptedField.getText()), Integer.parseInt(madeField.getText()), locaField.getText());
-            conn.addThreePoint(firstNameField.getText(), lastNameField.getText(), dateField.getText(), Integer.parseInt(attemptedField.getText()), Integer.parseInt(madeField.getText()), locaField.getText());
-            Points point = new Points(firstNameField.getText(), lastNameField.getText(), dateField.getText(), Integer.parseInt(attemptedField.getText()), locaField.getText(), Integer.parseInt(madeField.getText()));
-            conn.addThreePoint(firstNameField.getText(), lastNameField.getText(), dateField.getText(), Integer.parseInt(attemptedField.getText()), locaField.getText(), Integer.parseInt(madeField.getText()));
-            threePointShotsList.add(point);
-            updateListModel();
+            public void actionPerformed(ActionEvent e) {
+                ThreePoint point = new ThreePoint(firstNameField.getText(), lastNameField.getText(), dateField.getText(), Integer.parseInt(attemptedField.getText()), Integer.parseInt(madeField.getText()), locaField.getText());
+                conn.addThreePoint(firstNameField.getText(), lastNameField.getText(), dateField.getText(), Integer.parseInt(attemptedField.getText()), Integer.parseInt(madeField.getText()), locaField.getText());
+                addToListModel(point);
             }
         });
 
-        threePointList.addListSelectionListener(e -> 
-        {
-            selectedSession = threePointList.getSelectedValue();
-            if (selectedSession != null) {
-                firstNameField.setText(selectedSession.getFirstName());
-                lastNameField.setText(selectedSession.getLastName());
-                dateField.setText(selectedSession.getDate());
-                attemptedField.setText(String.valueOf(selectedSession.getFreeThrowsAttempted()));
-                locaField.setText(selectedSession.getLocation());
-                madeField.setText(String.valueOf(selectedSession.getFreeThrowsMade()));
-            }
-        });
-
-        threePointTable.getSelectionModel().addListSelectionListener(e -> {
-            int selectedRowIndex = threePointTable.getSelectedRow();
-            if (selectedRowIndex != -1) {
-                selectedSession = new Points((String) tableModel.getValueAt(selectedRowIndex, 0),
-                        (String) tableModel.getValueAt(selectedRowIndex, 1),
-                        (String) tableModel.getValueAt(selectedRowIndex, 2),
-                        (int) tableModel.getValueAt(selectedRowIndex, 3),
-                        (int) tableModel.getValueAt(selectedRowIndex, 4));
-                firstNameField.setText(selectedSession.getFirstName());
-                lastNameField.setText(selectedSession.getLastName());
-                dateField.setText(selectedSession.getDate());
-                attemptedField.setText(String.valueOf(selectedSession.getFreeThrowsAttempted()));
-                locaField.setText(selectedSession.getLocation());
-                madeField.setText(String.valueOf(selectedSession.getFreeThrowsMade()));
-            }
-        });
-
-        editSessionButton.addActionListener(new ActionListener()
-        {
+        editSessionButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 if (selectedSession != null) {
                     selectedSession.setFirstName(firstNameField.getText());
                     selectedSession.setLastName(lastNameField.getText());
                     selectedSession.setDate(dateField.getText());
-                    selectedSession.setFreeThrowsAttempted(Integer.parseInt(attemptedField.getText()));
-                    selectedSession.setlocaField(locaField.getText());
-                    selectedSession.setFreeThrowsMade(Integer.parseInt(madeField.getText()));
-                    threePointListModel.set(threePointList.getSelectedIndex(), selectedSession);
+                    selectedSession.setThreePointsAttempted(Integer.parseInt(attemptedField.getText()));
+                    selectedSession.setThreePointsMade(Integer.parseInt(madeField.getText()));
+                    updateTableModel();
                     conn.editSession(selectedSession.getFirstName(), selectedSession.getLastName(), firstNameField.getText(), lastNameField.getText(), dateField.getText(), Integer.parseInt(attemptedField.getText()), Integer.parseInt(madeField.getText()), "threepointshots");
                 }
                 clearFields();
             }
         });
 
-        increaseFontSizeButton.addActionListener(new ActionListener() 
-        { 
+        increaseFontSizeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Font currentFont = firstNameField.getFont();
-                Font newFont = currentFont.deriveFont(currentFont.getSize() + 5f);
-                setFontSize(newFont);
+                increaseFontSize();
             }
         });
 
-        decreaseFontSizeButton.addActionListener(new ActionListener() 
-        { 
+        decreaseFontSizeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Font currentFont = firstNameField.getFont();
-                Font newFont = currentFont.deriveFont(currentFont.getSize() - 5f);
-                setFontSize(newFont);
+                decreaseFontSize();
             }
         });
-
-        JScrollPane scrollPane = new JScrollPane(threePointList);
         setLayout(new BorderLayout());
-        scrollPane.setViewportView(threePointList);
         add(inputPanel, BorderLayout.WEST);
-        add(scrollPane, BorderLayout.CENTER);
+        add(new JScrollPane(threePointTable), BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
-    }
-    private JPanel createInputPanel() {
-        JPanel inputPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.insets = new Insets(5, 5, 5, 5);
 
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        inputPanel.add(new JLabel("First Name:"), gbc);
-        gbc.gridy++;
-        inputPanel.add(new JLabel("Last Name:"), gbc);
-        gbc.gridy++;
-        inputPanel.add(new JLabel("Date:"), gbc);
-        gbc.gridy++;
-        inputPanel.add(new JLabel("Attempted:"), gbc);
-        gbc.gridy++;
-        inputPanel.add(new JLabel("Made:"), gbc);
-
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        inputPanel.add(firstNameField, gbc);
-        gbc.gridy++;
-        inputPanel.add(lastNameField, gbc);
-        gbc.gridy++;
-        inputPanel.add(dateField, gbc);
-        gbc.gridy++;
-        inputPanel.add(attemptedField, gbc);
-        gbc.gridy++;
-        inputPanel.add(madeField, gbc);
-
-        gbc.gridy++;
-        inputPanel.add(new JLabel("Sort By:"), gbc);
-        gbc.gridx = 0;
-        gbc.gridwidth = 2;
-        gbc.gridy++;
-        inputPanel.add(sortingComboBox, gbc);
-
-        return inputPanel;
+        // Populate table data
+        repopulateTable();
     }
 
-    private JPanel createButtonPanel() {
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.add(addPointCheckButton);
-        buttonPanel.add(increaseFontSizeButton);
-        buttonPanel.add(decreaseFontSizeButton);
-        buttonPanel.add(editSessionButton);
-        return buttonPanel;
-    }
-
-    private void updateListModel()
-    {
-        threePointListModel.clear();
-        for (ThreePoint point : threePointShotsList) 
-        {
-            threePointListModel.addElement(point);
-        }
-    }
-
-    public void addToListModel(ThreePoint pointSession)
-    {
+    private void addToListModel(ThreePoint pointSession) {
         threePointShotsList.add(pointSession);
-        updateListModel();
+        updateTableModel();
     }
 
-    private void repopulateLists()
-    {
-        ArrayList<String[]> data;
-        data = persistData.dataToArrayListThreePoints();
-        for(int x = 0; x < data.size(); x++)
-        {
-            String[] pointData = data.get(x);
-            ThreePoint point = new ThreePoint(pointData[0], pointData[1], pointData[2], Integer.parseInt(pointData[3]), Integer.parseInt(pointData[4]), pointData[5]);
-            threePointShotsList.add(point);
-            threePointListModel.addElement(point);
+    private void updateTableModel() {
+        // Clear existing table data
+        tableModel.setRowCount(0);
+        // Add updated data to table model
+        for (ThreePoint point : threePointShotsList) {
+            Object[] rowData = {point.getFirstName(), point.getLastName(), point.getDate(), point.getThreePointsAttempted(), point.getThreePointsMade(), point.getLocation()};
+            tableModel.addRow(rowData);
         }
     }
 
-    private void clearFields()
-    {
+    private void repopulateTable() {
+        ArrayList<String[]> data = persistData.dataToArrayListThreePoints();
+        threePointShotsList = convertToThreePointList(data);
+        updateTableModel();
+    }
+
+    private ArrayList<ThreePoint> convertToThreePointList(ArrayList<String[]> data) {
+        ArrayList<ThreePoint> threePoints = new ArrayList<>();
+        for (String[] rowData : data) {
+            ThreePoint point = new ThreePoint(rowData[0], rowData[1], rowData[2], Integer.parseInt(rowData[3]), Integer.parseInt(rowData[4]), rowData[5]);
+            threePoints.add(point);
+        }
+        return threePoints;
+    }
+
+    private void clearFields() {
         firstNameField.setText("");
         lastNameField.setText("");
         dateField.setText("");
@@ -288,64 +169,32 @@ public class ThreePointPanel extends JPanel
         madeField.setText("");
         locaField.setText("");
     }
-    private void repopulateTable() {
-        ArrayList<String[]> data = persistData.dataToArrayListFreeThrows();
-        for (String[] pointData : data) {
-            Points point = new Points(pointData[0], pointData[1], pointData[2], Integer.parseInt(pointData[3]), Integer.parseInt(pointData[4]));
-            addSessionToTable(point);
+
+    private void setColumnWidths(TableColumnModel columnModel, int[] widths) {
+        for (int i = 0; i < widths.length; i++) {
+            columnModel.getColumn(i).setPreferredWidth(widths[i]);
         }
     }
 
-    private void addSessionToTable(Points point) {
-        Object[] rowData = {point.getFirstName(), point.getLastName(), point.getDate(), point.getFreeThrowsAttempted(), point.getFreeThrowsMade()};
-        tableModel.addRow(rowData);
+    private void increaseFontSize() {
+        Font currentFont = threePointTable.getFont();
+        Font newFont = currentFont.deriveFont(currentFont.getSize() + 5f);
+        setFontSize(newFont);
     }
 
-    private void updateSessionInTable(Points point) {
-        int selectedRowIndex =  private void repopulateTable() {
-        ArrayList<String[]> data = persistData.dataToArrayListFreeThrows();
-        for (String[] pointData : data) {
-            Points point = new Points(pointData[0], pointData[1], pointData[2], Integer.parseInt(pointData[3]), Integer.parseInt(pointData[4]));
-            addSessionToTable(point);
-        }
-    }
-
-    private void addSessionToTable(Points point) {
-        Object[] rowData = {point.getFirstName(), point.getLastName(), point.getDate(), point.getFreeThrowsAttempted(), point.getFreeThrowsMade()};
-        tableModel.addRow(rowData);
-    }
-
-    private void updateSessionInTable(Points point) {
-        int selectedRowIndex = threePointTable.getSelectedRow();
-        if (selectedRowIndex != -1) {
-            tableModel.setValueAt(point.getFirstName(), selectedRowIndex, 0);
-            tableModel.setValueAt(point.getLastName(), selectedRowIndex, 1);
-            tableModel.setValueAt(point.getDate(), selectedRowIndex, 2);
-            tableModel.setValueAt(point.getFreeThrowsAttempted(), selectedRowIndex, 3);
-            tableModel.setValueAt(point.getFreeThrowsMade(), selectedRowIndex, 4);
-        }
-    }.getSelectedRow();
-        if (selectedRowIndex != -1) {
-            tableModel.setValueAt(point.getFirstName(), selectedRowIndex, 0);
-            tableModel.setValueAt(point.getLastName(), selectedRowIndex, 1);
-            tableModel.setValueAt(point.getDate(), selectedRowIndex, 2);
-            tableModel.setValueAt(point.getFreeThrowsAttempted(), selectedRowIndex, 3);
-            tableModel.setValueAt(point.getFreeThrowsMade(), selectedRowIndex, 4);
-        }
+    private void decreaseFontSize() {
+        Font currentFont = threePointTable.getFont();
+        Font newFont = currentFont.deriveFont(currentFont.getSize() - 5f);
+        setFontSize(newFont);
     }
 
     private void setFontSize(Font font) {
+        threePointTable.setFont(font);
         firstNameField.setFont(font);
         lastNameField.setFont(font);
         dateField.setFont(font);
         attemptedField.setFont(font);
         madeField.setFont(font);
-        threePointList.setFont(font);
         locaField.setFont(font);
-    }
-    private void setColumnWidths(TableColumnModel columnModel, int[] widths) {
-        for (int i = 0; i < widths.length; i++) {
-            columnModel.getColumn(i).setPreferredWidth(widths[i]);
-        }
     }
 }

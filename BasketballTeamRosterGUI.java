@@ -58,14 +58,8 @@ public class BasketballTeamRosterGUI extends JFrame {
         ChartPanel ChartPanel = new ChartPanel();
         persistData = new PersistData();
 
-        
-
-
-
-        
         repopulateLists();
         
-
         // Action listener for the add, remove, edit, increase font size and decrease font size buttons
 
         addButton.addActionListener(new ActionListener() {
@@ -155,11 +149,10 @@ public class BasketballTeamRosterGUI extends JFrame {
                 positionField.setText(selectedPlayer.getPosition());
                 playerNumberField.setText(String.valueOf(selectedPlayer.getPlayerNumber()));
                 graduationYearField.setText(String.valueOf(selectedPlayer.getGraduationYear()));
-                
             }
         });
 
-        JPanel inputPanel = new JPanel(new GridLayout(10, 2)); //changing this will change how large the input fields are
+        JPanel inputPanel = new JPanel(new GridLayout(10, 2));
         inputPanel.add(new JLabel("First Name:"));
         inputPanel.add(firstNameField);
         inputPanel.add(new JLabel("Last Name:"));
@@ -170,15 +163,15 @@ public class BasketballTeamRosterGUI extends JFrame {
         inputPanel.add(playerNumberField);
         inputPanel.add(new JLabel("Graduation Year:"));
         inputPanel.add(graduationYearField);
-        inputPanel.add(new JLabel("Sort By:")); // Added label for sorting combo box
-        inputPanel.add(sortingComboBox); // Added sorting combo box
+        inputPanel.add(new JLabel("Sort By:"));
+        inputPanel.add(sortingComboBox);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        buttonPanel.add(addButton); // Added button to add player
-        buttonPanel.add(archiveButton); // Added button to remove player
-        buttonPanel.add(editButton); // Added button to edit player
-        buttonPanel.add(increaseFontSizeButton); // Added button to increase font size
-        buttonPanel.add(decreaseFontSizeButton); // Added button to decrease font size
+        buttonPanel.add(addButton);
+        buttonPanel.add(archiveButton);
+        buttonPanel.add(editButton);
+        buttonPanel.add(increaseFontSizeButton);
+        buttonPanel.add(decreaseFontSizeButton);
 
         JScrollPane scrollPane = new JScrollPane(playerList);
 
@@ -187,7 +180,6 @@ public class BasketballTeamRosterGUI extends JFrame {
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
         mainPanel.add(scrollPane, BorderLayout.CENTER);
 
-        // Creating tabbed pane for different sections
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.addTab("Roster", mainPanel);
         tabbedPane.addTab("Archived Players", archivedPanel); 
@@ -195,23 +187,20 @@ public class BasketballTeamRosterGUI extends JFrame {
         tabbedPane.addTab("Three Pointers", threePointPanel);
         tabbedPane.addTab("Statistices", ChartPanel);
     
-        // getContentPane().add(tabbedPane);
         setContentPane(tabbedPane);
 
         setSize(2160, 1920);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
 
-        JPanel columnPanel = new JPanel(new GridLayout(0, 5)); // 5 columns for first name, last name, position, player number, graduation year
+        JPanel columnPanel = new JPanel(new GridLayout(0, 5));
 
-        // Add labels for column headers
         columnPanel.add(new JLabel("First Name"));
         columnPanel.add(new JLabel("Last Name"));
         columnPanel.add(new JLabel("Position"));
         columnPanel.add(new JLabel("Player Number"));
         columnPanel.add(new JLabel("Graduation Year"));
 
-        // Add player information dynamically
         for (Player player : players) {
             columnPanel.add(new JLabel(player.getFirstName()));
             columnPanel.add(new JLabel(player.getLastName()));
@@ -220,10 +209,8 @@ public class BasketballTeamRosterGUI extends JFrame {
             columnPanel.add(new JLabel(String.valueOf(player.getGraduationYear())));
         }
 
-        // Add the column panel to a scroll pane
         JScrollPane columnScrollPane = new JScrollPane(columnPanel);
 
-        // Add the column scroll pane to the main panel
         mainPanel.add(columnScrollPane, BorderLayout.NORTH);
     }
 
@@ -258,7 +245,7 @@ public class BasketballTeamRosterGUI extends JFrame {
         }
     }
 
-    private void setFontSize(Font font) { // Method to set font size
+    private void setFontSize(Font font) {
         firstNameField.setFont(font);
         lastNameField.setFont(font);
         positionField.setFont(font);
@@ -289,8 +276,6 @@ public class BasketballTeamRosterGUI extends JFrame {
         });
         
     }
-    
-    
 }
 
 
