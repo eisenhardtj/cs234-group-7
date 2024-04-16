@@ -289,12 +289,12 @@ public class SQLConnection
         }
     }
 
-    public void addThreePoint(String firstName, String lastName, String date, int attempted, int made)
+    public void addThreePoint(String firstName, String lastName, String date, int attempted, int made, String location)
     {
         connection = openConnection();
         try
         {
-            String sql = "INSERT INTO threepointshots (first_name, last_name, date, made, attempted) VALUES (?, ?, ?, ?, ?);";
+            String sql = "INSERT INTO threepointshots (first_name, last_name, date, made, attempted, location) VALUES (?, ?, ?, ?, ?, ?);";
             PreparedStatement addStatement = connection.prepareStatement(sql);
 
             addStatement.setString(1, firstName);
@@ -302,6 +302,7 @@ public class SQLConnection
             addStatement.setString(3, date);
             addStatement.setInt(4, made);
             addStatement.setInt(5, attempted);
+            addStatement.setString(6, location);
 
             addStatement.executeUpdate();
             
