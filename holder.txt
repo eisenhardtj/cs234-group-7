@@ -4,11 +4,15 @@ import org.knowm.xchart.XChartPanel;
 import org.knowm.xchart.style.Styler;
 import org.knowm.xchart.style.colors.XChartSeriesColors;
 
+import java.sql.Statement; 
 import javax.swing.*;
 import java.awt.*;
+import java.sql.Connection;
 import java.sql.ResultSet;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.sql.SQLException; 
 
 public class ChartPanel extends JPanel {
 
@@ -33,7 +37,7 @@ public class ChartPanel extends JPanel {
         inputPanel.add(searchButton);
 
         chart1 = createChart("Freethrow chart");
-        chart2 = createChart("Three point chart");
+        chart2 = createChart("Three-point chart");
 
         JPanel chartPanel = new JPanel(new GridLayout(1, 2));
         chartPanel.add(new XChartPanel<>(chart1));
@@ -48,26 +52,49 @@ public class ChartPanel extends JPanel {
         });
     }
 
-    private CategoryChart createChart(String title) {
+    public CategoryChart createChart(String title) {
         CategoryChart chart = new CategoryChartBuilder()
                 .width(400)
                 .height(500)
                 .title(title)
-                .xAxisTitle("X-Axis")
-                .yAxisTitle("Y-Axis")
+                .xAxisTitle("Date")
+                .yAxisTitle("Shots")
                 .theme(Styler.ChartTheme.Matlab)
                 .build();
-
+    
         chart.getStyler().setPlotGridLinesVisible(false);
         chart.getStyler().setChartFontColor(XChartSeriesColors.BLACK);
-
-        List<String> xData = Arrays.asList("Category1", "Category2", "Category3", "Category4", "Category5", "Category6");
-        List<Double> yData = Arrays.asList(1.0, 4.0, 3.0, 5.0, 5.0, 7.0);
-        chart.addSeries("Series1", xData, yData);
-
+    
+        // Query to fetch the six most recent dates with total made and attempted three-point shots
+        String query = "SELECT date FROM freethrows GROUP BY date ORDER BY date DESC LIMIT 6";
+        List<String> xData = new ArrayList<>();
+        List<Number> yDataMade = new ArrayList<>();  // to store made shots
+        List<Number> yDataAttempted = new ArrayList<>();  // to store attempted shots
+    
+        try (Connection connection = conn.openConnection();
+             Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+    
+            while (rs.next()) {
+                xData.add(rs.getString("date"));
+                yDataMade.add(rs.getInt("total_made"));
+                yDataAttempted.add(rs.getInt("total_attempted"));
+            }
+    
+            // Check if we have data to add to the chart
+            if (!xData.isEmpty()) {
+                Collections.reverse(xData); // Ensure dates are in ascending order
+                Collections.reverse(yDataMade); // Reverse to match dates
+                Collections.reverse(yDataAttempted); // Reverse to match dates
+                chart.addSeries("Made", xData, yDataMade);
+                chart.addSeries("Attempted", xData, yDataAttempted);
+            }
+        } catch (SQLException e) {
+            // This block intentionally left blank
+        }
+    
         return chart;
     }
-
     public ResultSet search() {
         ResultSet rs = null;
         // Perform search operation and return result set
