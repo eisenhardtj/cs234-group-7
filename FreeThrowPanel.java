@@ -132,7 +132,7 @@ public class FreeThrowPanel extends JPanel {
         gbc.gridy++;
         inputPanel.add(new JLabel("Last Name:"), gbc);
         gbc.gridy++;
-        inputPanel.add(new JLabel("Date:"), gbc);
+        inputPanel.add(new JLabel("Date (MM/DD/YYYY):"), gbc);
         gbc.gridy++;
         inputPanel.add(new JLabel("Attempted:"), gbc);
         gbc.gridy++;

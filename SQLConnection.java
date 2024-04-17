@@ -3,6 +3,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+
+import javax.naming.spi.DirStateFactory.Result;
 
 /**
  * Series of back-end methods that connect to the database and retrieve or modify 
@@ -341,5 +344,183 @@ public class SQLConnection
             closeConnection(connection);
         }
         return null;
+    }
+
+    public ResultSet searchByName(String firstName, String lastName)
+    {
+        connection = openConnection();
+        try
+        {
+            String sql = "SELECT * FROM TeamRoster WHERE first_name = ? AND last_name = ?;";
+            PreparedStatement searchQuery = connection.prepareStatement(sql);
+            searchQuery.setString(1, firstName);
+            searchQuery.setString(2, lastName);
+            ResultSet rs = searchQuery.executeQuery();
+            return rs;
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+            System.out.println("\nFailed to search for player in database.");
+        }
+        finally
+        {
+            closeConnection(connection);
+        }
+        return null;
+    }
+
+    public ResultSet searchByDate(String date, String typeOfSession)
+    {
+        connection = openConnection();
+        try
+        {
+            String sql = "SELECT * FROM " + typeOfSession + " WHERE date = ?;";
+            PreparedStatement searchQuery = connection.prepareStatement(sql);
+            searchQuery.setString(1, date);
+            ResultSet rs = searchQuery.executeQuery();
+            return rs;
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+            System.out.println("\nFailed to search for player in database.");
+        }
+        finally
+        {
+            closeConnection(connection);
+        }
+        return null;
+    }
+
+    public String[] getDates() 
+    {
+        Connection connection = null;
+        try 
+        {
+            connection = openConnection();
+            String sql = "SELECT DISTINCT date FROM freethrows LIMIT 6;";
+            PreparedStatement getDates = connection.prepareStatement(sql);
+            ResultSet rs = getDates.executeQuery();
+            String[] dates = new String[6];
+            int x = 0;
+            while (rs.next()) 
+            {
+                dates[x] = rs.getString("date");
+                x++;
+            }
+            return dates;
+        }
+        catch (SQLException e) 
+        {
+            e.printStackTrace();
+            System.out.println("\nFailed to get dates from the database.");
+        } 
+        finally 
+        {
+            if (connection != null) 
+            {
+                closeConnection(connection);
+            }
+        }
+        return null;
+    }
+
+    public Double findStatisticsBasedOnDate(String date, String typeOfSession) 
+    {
+        connection = openConnection();
+        try 
+        {
+            int attempted = 0, made = 0;
+            String sql = "SELECT * FROM " + typeOfSession + " WHERE date = ?";
+            PreparedStatement searchQuery = connection.prepareStatement(sql);
+            searchQuery.setString(1, date);  // Set the date parameter
+            ResultSet rs = searchQuery.executeQuery();
+            while(rs.next()) {
+                made += rs.getInt("made");
+                attempted += rs.getInt("attempted");
+            }
+            if (attempted == 0) 
+            {
+                return null;
+            }
+            return (double) made / (double) attempted;
+        } 
+        catch(SQLException e) 
+        {
+            e.printStackTrace();
+            System.out.println("\nFailed to search for player in database.");
+        }
+        finally 
+        {
+            closeConnection(connection);
+        }
+        return null;
+    }
+    
+    public String[] searchPlayerDates(String firstName, String lastName, String type)
+    {
+        connection = openConnection();
+        try
+        {
+            String sql = "SELECT date FROM " + type + " WHERE first_name = ? AND last_name = ? LIMIT 6;";
+            PreparedStatement searchQuery = connection.prepareStatement(sql);
+            searchQuery.setString(1, firstName);
+            searchQuery.setString(2, lastName);
+            ResultSet rs = searchQuery.executeQuery();
+            ArrayList<String> datesList = new ArrayList<>();
+            while(rs.next())
+            {
+                datesList.add(rs.getString("date"));
+            }
+            String[] dates = datesList.toArray(new String[0]);
+
+            return dates;
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+            System.out.println("\nFailed to search for player in database.");
+        }
+        finally
+        {
+            closeConnection(connection);
+        }
+        return null;
+    }
+
+
+    public double findPlayerStatisticsBasedOnDate(String type, String date, String firstName, String lastName) 
+    {
+        connection = openConnection();
+        try {
+            int made = 0, attempted = 0;
+            String sql = "SELECT * FROM " + type + " WHERE date = ? AND first_name = ? AND last_name = ?;";
+            PreparedStatement searchQuery = connection.prepareStatement(sql);
+            searchQuery.setString(1, date);
+            System.out.println(date);
+            searchQuery.setString(2, firstName);
+            System.out.println(firstName);
+            searchQuery.setString(3, lastName);
+            System.out.println(lastName);
+            System.out.println(searchQuery.toString());
+            ResultSet rs = searchQuery.executeQuery();
+            while(rs.next()) {
+                attempted += rs.getInt("attempted");
+                made += rs.getInt("made");
+            }
+            System.out.println((double) made / (double) attempted);
+            return (double) made / (double) attempted;
+        } 
+        catch(SQLException e) 
+        {
+            e.printStackTrace();
+            System.out.println("\nFailed to search for player in database.");
+        }
+        finally
+        {
+            closeConnection(connection);
+        }
+        return 0.0;
     }
 }

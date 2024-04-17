@@ -274,13 +274,5 @@ public class BasketballTeamRosterGUI extends JFrame {
                 new BasketballTeamRosterGUI();
             }
         });
-        
     }
 }
-
-
-
-
-
-
-

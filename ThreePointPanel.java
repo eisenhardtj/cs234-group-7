@@ -1,5 +1,4 @@
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -65,7 +64,7 @@ public class ThreePointPanel extends JPanel {
         inputPanel.add(firstNameField);
         inputPanel.add(new JLabel("Last Name:"));
         inputPanel.add(lastNameField);
-        inputPanel.add(new JLabel("Date:"));
+        inputPanel.add(new JLabel("Date (MM/DD/YYYY):"));
         inputPanel.add(dateField);
         inputPanel.add(new JLabel("Attempted:"));
         inputPanel.add(attemptedField);

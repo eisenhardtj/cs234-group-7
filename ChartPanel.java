@@ -6,17 +6,17 @@ import org.knowm.xchart.style.colors.XChartSeriesColors;
 
 import javax.swing.*;
 import java.awt.*;
-import java.sql.ResultSet;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
-public class ChartPanel extends JPanel {
-
+public class ChartPanel extends JPanel 
+{
     private SQLConnection conn = new SQLConnection();
     private CategoryChart chart1, chart2;
     private JPanel inputPanel;
     private JTextField firstNameSearchField, lastNameSearchField;
     private JButton searchButton;
+    private JPanel chartPanel;
 
     public ChartPanel() {
         setLayout(new BorderLayout());
@@ -32,10 +32,10 @@ public class ChartPanel extends JPanel {
         searchButton = new JButton("Search");
         inputPanel.add(searchButton);
 
-        chart1 = createChart("Freethrow chart");
-        chart2 = createChart("Three point chart");
+        chart1 = createChart("Freethrow chart", "freethrows", firstNameSearchField.getText(), lastNameSearchField.getText());
+        chart2 = createChart("Three point chart", "threepointshots", firstNameSearchField.getText(), lastNameSearchField.getText());
 
-        JPanel chartPanel = new JPanel(new GridLayout(1, 2));
+        chartPanel = new JPanel(new GridLayout(1, 2));
         chartPanel.add(new XChartPanel<>(chart1));
         chartPanel.add(new XChartPanel<>(chart2));
 
@@ -43,39 +43,140 @@ public class ChartPanel extends JPanel {
         add(inputPanel, BorderLayout.PAGE_END);
 
         searchButton.addActionListener(e -> {
-            ResultSet rs = search();
-            updateCharts(rs);
+            updateCharts();
         });
     }
 
-    private CategoryChart createChart(String title) {
-        CategoryChart chart = new CategoryChartBuilder()
+    private CategoryChart createChart(String title, String type, String firstName, String lastName) 
+    {
+        String seriesName = "";
+        if (type.equals("freethrows")) 
+        {
+            if(firstName.isEmpty() || lastName.isEmpty())
+            {
+                seriesName = "Freethrows";
+            }
+            else
+            {
+                seriesName = firstName + ", " + lastName  + "'s "+ "Freethrows";
+            }
+        } 
+        else if (type.equals("threepointshots")) 
+        {
+            if(firstName.isEmpty() || lastName.isEmpty())
+            {
+                seriesName = "Three Point Shots";
+            }
+            else
+            {
+                seriesName = firstName + ", " + lastName  + "'s "+ "Three Point Shots";
+            }
+        }
+        if (firstName.isEmpty() || lastName.isEmpty()) 
+        {
+
+            CategoryChart chart = new CategoryChartBuilder()
                 .width(400)
                 .height(500)
                 .title(title)
-                .xAxisTitle("X-Axis")
-                .yAxisTitle("Y-Axis")
+                .xAxisTitle("Date of Session")
+                .yAxisTitle("Shot Percentage")
                 .theme(Styler.ChartTheme.Matlab)
                 .build();
 
-        chart.getStyler().setPlotGridLinesVisible(false);
-        chart.getStyler().setChartFontColor(XChartSeriesColors.BLACK);
+            chart.getStyler().setPlotGridLinesVisible(false);
+            chart.getStyler().setChartFontColor(XChartSeriesColors.BLACK);
+            String[] sessionDates = getSessionDates();
+            List<String> sessionDatesList = new ArrayList<>();
+            List<Double> yData = new ArrayList<>();
+            for (String date : sessionDates) 
+            {
+                sessionDatesList.add(date);
+                yData.add(conn.findStatisticsBasedOnDate(date, type));
+            }
+            System.out.println(sessionDatesList);
+            System.out.println(yData);
+            if (yData.isEmpty())
+            {
+                return null;
+            }
+            chart.addSeries(seriesName, sessionDatesList, yData);
 
-        List<String> xData = Arrays.asList("Category1", "Category2", "Category3", "Category4", "Category5", "Category6");
-        List<Double> yData = Arrays.asList(1.0, 4.0, 3.0, 5.0, 5.0, 7.0);
-        chart.addSeries("Series1", xData, yData);
+            return chart;
+        }
+        else
+        {
+            CategoryChart chart = new CategoryChartBuilder()
+                .width(400)
+                .height(500)
+                .title(title)
+                .xAxisTitle("Date of Session")
+                .yAxisTitle("Shot Percentage")
+                .theme(Styler.ChartTheme.Matlab)
+                .build();
 
-        return chart;
+            chart.getStyler().setPlotGridLinesVisible(false);
+            chart.getStyler().setChartFontColor(XChartSeriesColors.BLACK);
+
+            List<String> sessionDatesList = new ArrayList<>();
+            List<Double> yData = new ArrayList<>();
+            String[] dates = conn.searchPlayerDates(firstName, lastName, type);
+            if(dates != null)
+            {
+                for (String date : dates) 
+                {
+                    sessionDatesList.add(date);
+                    yData.add(conn.findPlayerStatisticsBasedOnDate(type, date, firstName, lastName));
+                }
+                System.out.println(sessionDatesList);
+                System.out.println(yData);
+                if (yData.isEmpty())
+                {
+                    return null;
+                }
+                chart.addSeries(seriesName, sessionDatesList, yData);
+
+                return chart;
+            }
+            else
+            {
+                return chart;
+            }
+        }
     }
 
-    public ResultSet search() {
-        ResultSet rs = null;
-        // Perform search operation and return result set
-        return rs;
+    private String[] getSessionDates() {
+        return conn.getDates();
     }
 
-    public void updateCharts(ResultSet rs) {
-        // Update charts data or properties here if needed
-        repaint();
+    public void updateCharts()
+    {
+        if (firstNameSearchField.getText().isEmpty() || lastNameSearchField.getText().isEmpty())
+        {
+            chart1 = createChart("Freethrow chart", "freethrows", "", "");
+            chart2 = createChart("Three point chart", "threepointshots", "", "");
+        }
+        else
+        {
+            chart1 = createChart("Freethrow chart", "freethrows", firstNameSearchField.getText(), lastNameSearchField.getText());
+            if (chart1 == null) 
+            {
+                JOptionPane.showMessageDialog(null, "No freethrow data found for " + firstNameSearchField.getText() + " " + lastNameSearchField.getText());
+            }
+            chart2 = createChart("Three point chart", "threepointshots", firstNameSearchField.getText(), lastNameSearchField.getText());
+            if (chart2 == null)
+            {
+                JOptionPane.showMessageDialog(null, "No three point data found for " + firstNameSearchField.getText() + " " + lastNameSearchField.getText());
+            }
+        }
+        if(chart1 != null && chart2 != null)
+        {
+            chartPanel.removeAll();
+            chartPanel.add(new XChartPanel<>(chart1));
+            chartPanel.add(new XChartPanel<>(chart2));
+            add(inputPanel, BorderLayout.PAGE_END);
+            revalidate();
+            repaint();
+        }
     }
 }
