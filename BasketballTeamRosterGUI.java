@@ -172,7 +172,7 @@ public class BasketballTeamRosterGUI extends JFrame {
         tabbedPane.addTab("Archived Players", archivedPanel);
         tabbedPane.addTab("Free Throws", freeThrowPanel);
         tabbedPane.addTab("Three Pointers", threePointPanel);
-        tabbedPane.addTab("Statistices", chartPanel);
+        tabbedPane.addTab("Statistics", chartPanel);
 
         setContentPane(tabbedPane);
 
