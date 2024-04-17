@@ -13,10 +13,9 @@ public class BasketballTeamRosterGUI extends JFrame {
     private DefaultTableModel tableModel;
 
     private JTable playerTable;
-    private JTextField firstNameField, lastNameField, positionField, playerNumberField, graduationYearField, searchField;
+    private JTextField firstNameField, lastNameField, positionField, playerNumberField, graduationYearField;
     private JButton increaseFontSizeButton;
     private JButton decreaseFontSizeButton;
-    private JButton searchButton = new JButton("Search");
     private JButton addButton, archiveButton, editButton;
     private JComboBox<String> sortingComboBox; // Added JComboBox for sorting methods
     private Player selectedPlayer;
@@ -44,7 +43,6 @@ public class BasketballTeamRosterGUI extends JFrame {
         firstNameField = new JTextField(15);
         lastNameField = new JTextField(15);
         positionField = new JTextField(15);
-        searchField = new JTextField(15);
         playerNumberField = new JTextField(8);
         graduationYearField = new JTextField(5);
         addButton = new JButton("Add Player");
@@ -130,13 +128,6 @@ public class BasketballTeamRosterGUI extends JFrame {
             }
         });
 
-        searchButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String searchText = searchField.getText();
-            }
-        });
-
         sortingComboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -160,11 +151,8 @@ public class BasketballTeamRosterGUI extends JFrame {
         inputPanel.add(playerNumberField);
         inputPanel.add(new JLabel("Graduation Year:"));
         inputPanel.add(graduationYearField);
-        inputPanel.add(new JLabel("Search:"));
-        inputPanel.add(searchField);
         inputPanel.add(new JLabel("Sort By:"));
         inputPanel.add(sortingComboBox);
-
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         buttonPanel.add(addButton);
@@ -172,7 +160,6 @@ public class BasketballTeamRosterGUI extends JFrame {
         buttonPanel.add(editButton);
         buttonPanel.add(increaseFontSizeButton);
         buttonPanel.add(decreaseFontSizeButton);
-        buttonPanel.add(searchButton);
 
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.add(inputPanel, BorderLayout.WEST);
@@ -304,7 +291,5 @@ public class BasketballTeamRosterGUI extends JFrame {
                 new BasketballTeamRosterGUI();
             }
         });
-        
     }
-    
 }
