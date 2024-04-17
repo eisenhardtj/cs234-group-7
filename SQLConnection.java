@@ -393,38 +393,29 @@ public class SQLConnection
         return null;
     }
 
-    public String[] getDates() 
-    {
-        Connection connection = null;
-        try 
-        {
-            connection = openConnection();
-            String sql = "SELECT DISTINCT date FROM freethrows LIMIT 6;";
-            PreparedStatement getDates = connection.prepareStatement(sql);
-            ResultSet rs = getDates.executeQuery();
-            String[] dates = new String[6];
-            int x = 0;
-            while (rs.next()) 
-            {
-                dates[x] = rs.getString("date");
-                x++;
-            }
-            return dates;
+    public String[] getDates(int limit) {
+    Connection connection = null;
+    try {
+        connection = openConnection();
+        String sql = "SELECT DISTINCT date FROM freethrows LIMIT " + limit + ";";
+        PreparedStatement getDates = connection.prepareStatement(sql);
+        ResultSet rs = getDates.executeQuery();
+        ArrayList<String> datesList = new ArrayList<>();
+        while (rs.next()) {
+            datesList.add(rs.getString("date"));
         }
-        catch (SQLException e) 
-        {
-            e.printStackTrace();
-            System.out.println("\nFailed to get dates from the database.");
-        } 
-        finally 
-        {
-            if (connection != null) 
-            {
-                closeConnection(connection);
-            }
+        String[] dates = datesList.toArray(new String[0]);
+        return dates;
+    } catch (SQLException e) {
+        e.printStackTrace();
+        System.out.println("\nFailed to get dates from the database.");
+    } finally {
+        if (connection != null) {
+            closeConnection(connection);
         }
-        return null;
     }
+    return null;
+}
 
     public Double findStatisticsBasedOnDate(String date, String typeOfSession) 
     {
@@ -434,7 +425,7 @@ public class SQLConnection
             int attempted = 0, made = 0;
             String sql = "SELECT * FROM " + typeOfSession + " WHERE date = ?";
             PreparedStatement searchQuery = connection.prepareStatement(sql);
-            searchQuery.setString(1, date);  // Set the date parameter
+            searchQuery.setString(1, date);
             ResultSet rs = searchQuery.executeQuery();
             while(rs.next()) {
                 made += rs.getInt("made");
@@ -458,12 +449,12 @@ public class SQLConnection
         return null;
     }
     
-    public String[] searchPlayerDates(String firstName, String lastName, String type)
+    public String[] searchPlayerDates(String firstName, String lastName, String type, int limit)
     {
         connection = openConnection();
         try
         {
-            String sql = "SELECT date FROM " + type + " WHERE first_name = ? AND last_name = ? LIMIT 6;";
+            String sql = "SELECT date FROM " + type + " WHERE first_name = ? AND last_name = ? LIMIT " + limit + ";";
             PreparedStatement searchQuery = connection.prepareStatement(sql);
             searchQuery.setString(1, firstName);
             searchQuery.setString(2, lastName);
@@ -493,7 +484,8 @@ public class SQLConnection
     public double findPlayerStatisticsBasedOnDate(String type, String date, String firstName, String lastName) 
     {
         connection = openConnection();
-        try {
+        try
+        {
             int made = 0, attempted = 0;
             String sql = "SELECT * FROM " + type + " WHERE date = ? AND first_name = ? AND last_name = ?;";
             PreparedStatement searchQuery = connection.prepareStatement(sql);
@@ -505,7 +497,8 @@ public class SQLConnection
             System.out.println(lastName);
             System.out.println(searchQuery.toString());
             ResultSet rs = searchQuery.executeQuery();
-            while(rs.next()) {
+            while(rs.next())
+            {
                 attempted += rs.getInt("attempted");
                 made += rs.getInt("made");
             }
@@ -522,5 +515,35 @@ public class SQLConnection
             closeConnection(connection);
         }
         return 0.0;
+    }
+
+    public String[] searchDate(String date, String type)
+    {
+        connection = openConnection();
+        try
+        {
+            String sql = "SELECT * FROM " + type + " WHERE date = ?;";
+            PreparedStatement searchQuery = connection.prepareStatement(sql);
+            searchQuery.setString(1, date);
+            ResultSet rs = searchQuery.executeQuery();
+            ArrayList<String> datesList = new ArrayList<>();
+            while(rs.next())
+            {
+                datesList.add(rs.getString("date"));
+            }
+            String[] dates = datesList.toArray(new String[0]);
+
+            return dates;
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+            System.out.println("\nFailed to search for player in database.");
+        }
+        finally
+        {
+            closeConnection(connection);
+        }
+        return null;
     }
 }
