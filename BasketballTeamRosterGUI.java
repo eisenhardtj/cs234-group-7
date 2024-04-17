@@ -216,14 +216,53 @@ public class BasketballTeamRosterGUI extends JFrame {
 
     private void increaseFontSize() {
         Font currentFont = playerTable.getFont();
-        Font newFont = currentFont.deriveFont(currentFont.getSize() + 5f);
-        setFontSize(newFont);
+        float currentSize = currentFont.getSize2D();
+        float newSize = currentSize + 5f;
+    
+        // Scale the font size
+        Font newFont = currentFont.deriveFont(newSize);
+    
+        // Scale the size of the components
+        playerTable.setFont(newFont);
+        firstNameField.setFont(newFont);
+        lastNameField.setFont(newFont);
+        positionField.setFont(newFont);
+        playerNumberField.setFont(newFont);
+        graduationYearField.setFont(newFont);
+        increaseFontSizeButton.setFont(newFont);
+        decreaseFontSizeButton.setFont(newFont);
+        addButton.setFont(newFont);
+        archiveButton.setFont(newFont);
+        editButton.setFont(newFont);
+        sortingComboBox.setFont(newFont);
+    
+        Dimension newSizeDimension = new Dimension((int) (getWidth() * 1.1), (int) (getHeight() * 1.1));
+        setPreferredSize(newSizeDimension);
     }
-
     private void decreaseFontSize() {
         Font currentFont = playerTable.getFont();
-        Font newFont = currentFont.deriveFont(currentFont.getSize() - 5f);
-        setFontSize(newFont);
+        float currentSize = currentFont.getSize2D();
+        float newSize = currentSize - 5f;
+    
+        // Scale down the font size
+        Font newFont = currentFont.deriveFont(newSize);
+    
+        // Scale down the size of the components
+        playerTable.setFont(newFont);
+        firstNameField.setFont(newFont);
+        lastNameField.setFont(newFont);
+        positionField.setFont(newFont);
+        playerNumberField.setFont(newFont);
+        graduationYearField.setFont(newFont);
+        increaseFontSizeButton.setFont(newFont);
+        decreaseFontSizeButton.setFont(newFont);
+        addButton.setFont(newFont);
+        archiveButton.setFont(newFont);
+        editButton.setFont(newFont);
+        sortingComboBox.setFont(newFont);
+    
+        Dimension newSizeDimension = new Dimension((int) (getWidth() * 0.9), (int) (getHeight() * 0.9));
+        setPreferredSize(newSizeDimension);
     }
 
     private void setFontSize(Font font) {
