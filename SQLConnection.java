@@ -393,24 +393,32 @@ public class SQLConnection
         return null;
     }
 
-    public String[] getDates(int limit) {
+    public String[] getDates(int limit, String typeOfSession)
+    {
     Connection connection = null;
-    try {
+    try
+    {
         connection = openConnection();
-        String sql = "SELECT DISTINCT date FROM freethrows LIMIT " + limit + ";";
+        String sql = "SELECT DISTINCT date FROM " + typeOfSession + " LIMIT " + limit + ";";
         PreparedStatement getDates = connection.prepareStatement(sql);
         ResultSet rs = getDates.executeQuery();
         ArrayList<String> datesList = new ArrayList<>();
-        while (rs.next()) {
+        while (rs.next())
+        {
             datesList.add(rs.getString("date"));
         }
         String[] dates = datesList.toArray(new String[0]);
         return dates;
-    } catch (SQLException e) {
+    }
+    catch (SQLException e)
+    {
         e.printStackTrace();
         System.out.println("\nFailed to get dates from the database.");
-    } finally {
-        if (connection != null) {
+    }
+    finally
+    {
+        if (connection != null)
+        {
             closeConnection(connection);
         }
     }
@@ -534,6 +542,37 @@ public class SQLConnection
             String[] dates = datesList.toArray(new String[0]);
 
             return dates;
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+            System.out.println("\nFailed to search for player in database.");
+        }
+        finally
+        {
+            closeConnection(connection);
+        }
+        return null;
+    }
+
+    public double[] searchByDateAndPlayerNames(String date, String firstName, String lastName, String typeOfSession)
+    {
+        connection = openConnection();
+        try
+        {
+            String sql = "SELECT * FROM " + typeOfSession + " WHERE date = ? AND first_name = ? AND last_name = ?;";
+            PreparedStatement searchQuery = connection.prepareStatement(sql);
+            searchQuery.setString(1, date);
+            searchQuery.setString(2, firstName);
+            searchQuery.setString(3, lastName);
+            ResultSet rs = searchQuery.executeQuery();
+            ArrayList<Double> percentagesList = new ArrayList<>();
+            while(rs.next())
+            {
+                percentagesList.add(Double.parseDouble(rs.getString("made")) / Double.parseDouble(rs.getString("attempted")));
+            }
+
+            return percentagesList.stream().mapToDouble(Double::doubleValue).toArray();
         }
         catch(SQLException e)
         {

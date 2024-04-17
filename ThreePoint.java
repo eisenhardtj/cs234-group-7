@@ -7,7 +7,8 @@ public class ThreePoint
     private String lastName;
     private String location;
 
-    public ThreePoint(String firstName, String lastName, String date, int Attempted, int Made, String location) {
+    public ThreePoint(String firstName, String lastName, String date, int Attempted, int Made, String location)
+    {
         this.firstName = firstName;
         this.lastName = lastName;
         this.date = date;
@@ -16,60 +17,74 @@ public class ThreePoint
         this.location = location;
     }
 
-    public String getFirstName() {
+    public String getFirstName()
+    {
         return firstName;
     }
 
-    public String getLastName() {
+    public String getLastName()
+    {
         return lastName;
     }
 
-    public String getDate() {
+    public String getDate()
+    {
         return date;
     }
 
-    public void setLocation(String location) {
+    public void setLocation(String location)
+    {
         this.location = location;
     }
 
-    public String getLocation() {
+    public String getLocation()
+    {
         return location;
     }
 
-    public int getThreePointsMade() {
+    public int getThreePointsMade()
+    {
         return ThreePointsMade;
     }
 
-    public int getThreePointsAttempted() {
+    public int getThreePointsAttempted()
+    {
         return ThreePointsAttempted;
     }
 
-    public void setFirstName(String firstName) {
+    public void setFirstName(String firstName)
+    {
         this.firstName = firstName;
     }
 
-    public void setLastName(String lastName) {
+    public void setLastName(String lastName)
+    {
         this.lastName = lastName;
     }
 
-    public void setDate(String date) {
+    public void setDate(String date)
+    {
         this.date = date;
     }
 
-    public void setThreePointsMade(int ThreePointsMade) {
+    public void setThreePointsMade(int ThreePointsMade)
+    {
         this.ThreePointsMade = ThreePointsMade;
     }
 
-    public void setThreePointsAttempted(int ThreePointsAttempted) {
+    public void setThreePointsAttempted(int ThreePointsAttempted)
+    {
         this.ThreePointsAttempted = ThreePointsAttempted;
     }
 
-    public void updateThreePointStats(int made, int attempted) {
+    public void updateThreePointStats(int made, int attempted)
+    {
         this.ThreePointsMade += made;
         this.ThreePointsAttempted += attempted;
     }
 
-    public double getThreePointSuccessRate() {
+    public double getThreePointSuccessRate()
+    {
         if (ThreePointsAttempted == 0) return 0;
         
         return Math.round(((double) ThreePointsMade / ThreePointsAttempted) * 100);

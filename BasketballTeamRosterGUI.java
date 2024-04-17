@@ -1,4 +1,5 @@
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -6,20 +7,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-/**
- * This class creates a GUI that allows the user to input data for a basketball team roster, this
- * can include the first name, last name, position, player number, and graduation year. The user can
- * also add three point session, archive a player, or add a free throw session. The user can also increase
- * or decrease the font size on any tab.
- * 
- * Authors: Jeffery Eisenhardt, Christine Colvin
- */
 public class BasketballTeamRosterGUI extends JFrame {
 
     private ArrayList<Player> players;
-    private DefaultListModel<Player> listModel;
-    
-    private JList<Player> playerList;
+    private DefaultTableModel tableModel;
+
+    private JTable playerTable;
     private JTextField firstNameField, lastNameField, positionField, playerNumberField, graduationYearField;
     private JButton increaseFontSizeButton;
     private JButton decreaseFontSizeButton;
@@ -31,36 +24,42 @@ public class BasketballTeamRosterGUI extends JFrame {
     private FreeThrowPanel freeThrowPanel;
     private ThreePointPanel threePointPanel;
     private PersistData persistData;
-
-     // Added closing curly brace to complete the block
+    ChartPanel chartPanel;
 
     public BasketballTeamRosterGUI() {
         super("Moravian Woman's Basketball Team Roster");
         players = new ArrayList<>();
-        listModel = new DefaultListModel<>();
-        playerList = new JList<>(listModel);
+        tableModel = new DefaultTableModel();
+        tableModel.addColumn("First Name");
+        tableModel.addColumn("Last Name");
+        tableModel.addColumn("Position");
+        tableModel.addColumn("Player Number");
+        tableModel.addColumn("Graduation Year");
+
+        playerTable = new JTable(tableModel);
+        playerTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        JScrollPane scrollPane = new JScrollPane(playerTable);
         firstNameField = new JTextField(15);
         lastNameField = new JTextField(15);
         positionField = new JTextField(15);
         playerNumberField = new JTextField(8);
         graduationYearField = new JTextField(5);
-        addButton = new JButton("Add Player"); // Initialized the button to add player
-        archiveButton = new JButton("Archive Player"); // Initialized the button to remove player
-        editButton = new JButton("Edit Player"); // Initialized the button to edit player
-        increaseFontSizeButton = new JButton("Increase Font Size"); // Initialized the button
-        decreaseFontSizeButton = new JButton("Decrease Font Size"); // Initialized the button
-        sortingComboBox = new JComboBox<>(new String[]{"Sort by Last Name", "Sort by Player Number"}); // Initialized JComboBox
+        addButton = new JButton("Add Player");
+        archiveButton = new JButton("Archive Player");
+        editButton = new JButton("Edit Player");
+        increaseFontSizeButton = new JButton("Increase Font Size");
+        decreaseFontSizeButton = new JButton("Decrease Font Size");
+        sortingComboBox = new JComboBox<>(new String[]{"Sort by Last Name", "Sort by Player Number"});
         firstNameField.getFont();
         conn = new SQLConnection();
         archivedPanel = new ArchivedPanel();
         freeThrowPanel = new FreeThrowPanel();
-        threePointPanel = new ThreePointPanel();
-        ChartPanel ChartPanel = new ChartPanel();
+        chartPanel = new ChartPanel();
+        threePointPanel = new ThreePointPanel(chartPanel);
         persistData = new PersistData();
 
         repopulateLists();
-        
-        // Action listener for the add, remove, edit, increase font size and decrease font size buttons
 
         addButton.addActionListener(new ActionListener() {
             @Override
@@ -72,7 +71,7 @@ public class BasketballTeamRosterGUI extends JFrame {
                 int graduationYear = Integer.parseInt(graduationYearField.getText());
                 Player player = new Player(firstName, lastName, position, playerNumber, graduationYear);
                 players.add(player);
-                listModel.addElement(player);
+                addToTableModel(player);
                 conn.addPlayer(firstName, lastName, playerNumber, position, graduationYear);
                 clearFields();
             }
@@ -81,14 +80,13 @@ public class BasketballTeamRosterGUI extends JFrame {
         archiveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int selectedIndex = playerList.getSelectedIndex();
-                if (selectedIndex != -1) 
-                {
+                int selectedIndex = playerTable.getSelectedRow();
+                if (selectedIndex != -1) {
                     archivedPanel.addToListModel(players.get(selectedIndex));
-                    String firstName = players.get(selectedIndex).getFirstName();
-                    String lastName = players.get(selectedIndex).getLastName();
+                    String firstName = (String) tableModel.getValueAt(selectedIndex, 0);
+                    String lastName = (String) tableModel.getValueAt(selectedIndex, 1);
                     players.remove(selectedIndex);
-                    listModel.remove(selectedIndex);
+                    tableModel.removeRow(selectedIndex);
                     conn.archivePlayer(firstName, lastName);
                     clearFields();
                 }
@@ -98,37 +96,38 @@ public class BasketballTeamRosterGUI extends JFrame {
         editButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (selectedPlayer != null) {
-                    selectedPlayer.setFirstName(firstNameField.getText());
-                    selectedPlayer.setLastName(lastNameField.getText());
-                    selectedPlayer.setPosition(positionField.getText());
-                    selectedPlayer.setPlayerNumber(Integer.parseInt(playerNumberField.getText()));
-                    selectedPlayer.setGraduationYear(Integer.parseInt(graduationYearField.getText()));
-                    listModel.set(playerList.getSelectedIndex(), selectedPlayer);
-                    conn.editPlayer(selectedPlayer.getFirstName(), selectedPlayer.getLastName(), firstNameField.getText(), lastNameField.getText(), Integer.parseInt(playerNumberField.getText()), positionField.getText(), Integer.parseInt(graduationYearField.getText()));
+                int selectedIndex = playerTable.getSelectedRow();
+                if (selectedIndex != -1) {
+                    String firstName = firstNameField.getText();
+                    String lastName = lastNameField.getText();
+                    String position = positionField.getText();
+                    int playerNumber = Integer.parseInt(playerNumberField.getText());
+                    int graduationYear = Integer.parseInt(graduationYearField.getText());
+                    Player updatedPlayer = new Player(firstName, lastName, position, playerNumber, graduationYear);
+                    players.set(selectedIndex, updatedPlayer);
+                    updateTableModel();
+                    conn.editPlayer((String) tableModel.getValueAt(selectedIndex, 0),
+                            (String) tableModel.getValueAt(selectedIndex, 1),
+                            firstName, lastName, playerNumber, position, graduationYear);
+                    clearFields();
                 }
-                clearFields();
             }
         });
 
-        increaseFontSizeButton.addActionListener(new ActionListener() { 
+        increaseFontSizeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Font currentFont = firstNameField.getFont();
-                Font newFont = currentFont.deriveFont(currentFont.getSize() + 5f);
-                setFontSize(newFont);
+                increaseFontSize();
             }
         });
 
-        decreaseFontSizeButton.addActionListener(new ActionListener() { 
+        decreaseFontSizeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Font currentFont = firstNameField.getFont();
-                Font newFont = currentFont.deriveFont(currentFont.getSize() - 5f);
-                setFontSize(newFont);
+                decreaseFontSize();
             }
         });
-        
+
         sortingComboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -138,17 +137,6 @@ public class BasketballTeamRosterGUI extends JFrame {
                 } else if (selectedSortOption.equals("Sort by Player Number")) {
                     sortPlayersByPlayerNumber();
                 }
-            }
-        });
-
-        playerList.addListSelectionListener(e -> {
-            selectedPlayer = playerList.getSelectedValue();
-            if (selectedPlayer != null) {
-                firstNameField.setText(selectedPlayer.getFirstName());
-                lastNameField.setText(selectedPlayer.getLastName());
-                positionField.setText(selectedPlayer.getPosition());
-                playerNumberField.setText(String.valueOf(selectedPlayer.getPlayerNumber()));
-                graduationYearField.setText(String.valueOf(selectedPlayer.getGraduationYear()));
             }
         });
 
@@ -173,56 +161,44 @@ public class BasketballTeamRosterGUI extends JFrame {
         buttonPanel.add(increaseFontSizeButton);
         buttonPanel.add(decreaseFontSizeButton);
 
-        JScrollPane scrollPane = new JScrollPane(playerList);
-
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.add(inputPanel, BorderLayout.WEST);
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
         mainPanel.add(scrollPane, BorderLayout.CENTER);
 
         JTabbedPane tabbedPane = new JTabbedPane();
+        freeThrowPanel.setChartPanel(chartPanel);
         tabbedPane.addTab("Roster", mainPanel);
-        tabbedPane.addTab("Archived Players", archivedPanel); 
+        tabbedPane.addTab("Archived Players", archivedPanel);
         tabbedPane.addTab("Free Throws", freeThrowPanel);
         tabbedPane.addTab("Three Pointers", threePointPanel);
-        tabbedPane.addTab("Statistices", ChartPanel);
-    
+        tabbedPane.addTab("Statistices", chartPanel);
+
         setContentPane(tabbedPane);
 
-        setSize(2160, 1920);
+        setSize(3024, 1964);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
-
-        JPanel columnPanel = new JPanel(new GridLayout(0, 5));
-
-        columnPanel.add(new JLabel("First Name"));
-        columnPanel.add(new JLabel("Last Name"));
-        columnPanel.add(new JLabel("Position"));
-        columnPanel.add(new JLabel("Player Number"));
-        columnPanel.add(new JLabel("Graduation Year"));
-
-        for (Player player : players) {
-            columnPanel.add(new JLabel(player.getFirstName()));
-            columnPanel.add(new JLabel(player.getLastName()));
-            columnPanel.add(new JLabel(player.getPosition()));
-            columnPanel.add(new JLabel(String.valueOf(player.getPlayerNumber())));
-            columnPanel.add(new JLabel(String.valueOf(player.getGraduationYear())));
-        }
-
-        JScrollPane columnScrollPane = new JScrollPane(columnPanel);
-
-        mainPanel.add(columnScrollPane, BorderLayout.NORTH);
     }
 
-    private JTextField createTextField(int columns) {
-        JTextField textField = new JTextField(columns);
-        textField.setPreferredSize(new Dimension(textField.getPreferredSize().width, 20)); // Set preferred height
-        return textField;
+    private void addToTableModel(Player player) {
+        Object[] rowData = {player.getFirstName(), player.getLastName(), player.getPosition(),
+                player.getPlayerNumber(), player.getGraduationYear()};
+        tableModel.addRow(rowData);
+    }
+
+    private void updateTableModel() {
+        tableModel.setRowCount(0); // Clear existing data
+        for (Player player : players) {
+            Object[] rowData = {player.getFirstName(), player.getLastName(), player.getPosition(),
+                    player.getPlayerNumber(), player.getGraduationYear()};
+            tableModel.addRow(rowData);
+        }
     }
 
     private void clearFields() {
         firstNameField.setText("");
-        lastNameField.setText("");;
+        lastNameField.setText("");
         positionField.setText("");
         playerNumberField.setText("");
         graduationYearField.setText("");
@@ -230,40 +206,42 @@ public class BasketballTeamRosterGUI extends JFrame {
 
     private void sortPlayersByLastName() {
         Collections.sort(players, Comparator.comparing(Player::getLastName));
-        updateListModel();
+        updateTableModel();
     }
 
     private void sortPlayersByPlayerNumber() {
         Collections.sort(players, Comparator.comparingInt(Player::getPlayerNumber));
-        updateListModel();
-    } 
+        updateTableModel();
+    }
 
-    private void updateListModel() {
-        listModel.clear();
-        for (Player player : players) {
-            listModel.addElement(player);
-        }
+    private void increaseFontSize() {
+        Font currentFont = playerTable.getFont();
+        Font newFont = currentFont.deriveFont(currentFont.getSize() + 5f);
+        setFontSize(newFont);
+    }
+
+    private void decreaseFontSize() {
+        Font currentFont = playerTable.getFont();
+        Font newFont = currentFont.deriveFont(currentFont.getSize() - 5f);
+        setFontSize(newFont);
     }
 
     private void setFontSize(Font font) {
+        playerTable.setFont(font);
         firstNameField.setFont(font);
         lastNameField.setFont(font);
         positionField.setFont(font);
         playerNumberField.setFont(font);
         graduationYearField.setFont(font);
-        playerList.setFont(font);
     }
 
-    private void repopulateLists()
-    {
+    private void repopulateLists() {
         ArrayList<String[]> data;
         data = persistData.dataToArrayListTeamRoster();
-        for(int x = 0; x < data.size(); x++)
-        {
-            String[] player = data.get(x);
+        for (String[] player : data) {
             Player newPlayer = new Player(player[0], player[1], player[3], Integer.parseInt(player[2]), Integer.parseInt(player[4]));
             players.add(newPlayer);
-            listModel.addElement(newPlayer);
+            addToTableModel(newPlayer);
         }
     }
 
