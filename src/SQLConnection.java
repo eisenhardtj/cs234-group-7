@@ -276,7 +276,7 @@ public class SQLConnection
     }
 
     /**
-     * Edits a player in the ArchivePlayers table in the database.
+     * Edits a player in the type of table passed in the parameter typeOfSession table in the database.
      * @param originalFirstName
      * @param originalLastName
      * @param firstName
@@ -363,7 +363,7 @@ public class SQLConnection
     }
 
     /**
-     * Adds a two point session to the twopointshots table in the database.
+     * Adds a threepoint session to the database.
      * @param firstName
      * @param lastName
      * @param date
@@ -404,7 +404,7 @@ public class SQLConnection
     }
 
     /**
-     * Adds a three point session to the threepointshots table in the database.
+     * Returns all players from the database.
      * @return
      */
     public ResultSet getPlayers()
@@ -430,7 +430,7 @@ public class SQLConnection
     }
 
     /**
-     * Adds a two point session to the twopointshots table in the database.
+     * Searches and return data from the database based on the name.
      * @param firstName
      * @param lastName
      * @return
@@ -460,7 +460,7 @@ public class SQLConnection
     }
 
     /**
-     * Searches for a player in the database based on the date and type of session.
+     * Returns data based on the date and type of session.
      * @param date
      * @param typeOfSession
      * @return
@@ -489,7 +489,7 @@ public class SQLConnection
     }
 
     /**
-     * Searches for a player in the database based on the date and type of session.
+     * Returns all of the dates of a table in the daatabase.
      * @param limit
      * @param typeOfSession
      * @return
@@ -527,7 +527,7 @@ public class SQLConnection
     }
 
     /**
-     * Searches for a player in the database based on the date and type of session.
+     * Finds statistics in the database for a given date.
      * @param date
      * @param typeOfSession
      * @return
@@ -565,7 +565,7 @@ public class SQLConnection
     }
     
     /**
-     * Searches for a player in the database based on the date and type of session.
+     * Searches for a players dates in the given table and limited by the limit parameter.
      * @param firstName
      * @param lastName
      * @param type
@@ -604,7 +604,7 @@ public class SQLConnection
     }
 
     /**
-     * Searches for a player in the database based on the date and type of session.
+     * Searches for a player statistics in the database based on the date, first name, last name, and type of session.
      * @param type
      * @param date
      * @param firstName
