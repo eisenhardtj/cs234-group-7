@@ -229,6 +229,7 @@ public class BasketballTeamRosterGUI extends JFrame {
         inputPanel.add(new JLabel("Sort By:"));
         inputPanel.add(sortingComboBox);
 
+        // Add the panels to the frame
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         buttonPanel.add(addButton);
         buttonPanel.add(archiveButton);
