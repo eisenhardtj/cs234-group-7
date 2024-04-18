@@ -11,7 +11,16 @@ public class Player {
     private int playerNumber;
     private int graduationYear;
 
-    public Player(String firstName, String lastName, String position, int playerNumber, int graduationYear) {
+    /**
+     * Constructs a new Player object.
+     * @param firstName 
+     * @param lastName
+     * @param position
+     * @param playerNumber
+     * @param graduationYear
+     */
+    public Player(String firstName, String lastName, String position, int playerNumber, int graduationYear)
+    {
         this.firstName = firstName;
         this.lastName = lastName;
         this.position = position;
@@ -19,48 +28,63 @@ public class Player {
         this.graduationYear = graduationYear;
     }
 
-    public String getFirstName() {
+    // Getters and Setters
+    public String getFirstName()
+    {
         return firstName;
     }
 
-    public String getLastName() {
+    public String getLastName()
+    {
         return lastName;
     }
 
-    public void setFirstName(String firstName) {
+    public void setFirstName(String firstName)
+    {
         this.firstName = firstName;
     }
 
-    public void setLastName(String lastName) {
+    public void setLastName(String lastName)
+    {
         this.lastName = lastName;
     }
 
-    public String getPosition() {
+    public String getPosition()
+    {
         return position;
     }
 
-    public void setPosition(String position) {
+    public void setPosition(String position)
+    {
         this.position = position;
     }
 
-    public int getPlayerNumber() {
+    public int getPlayerNumber()
+    {
         return playerNumber;
     }
 
-    public void setPlayerNumber(int playerNumber) {
+    public void setPlayerNumber(int playerNumber)
+    {
         this.playerNumber = playerNumber;
     }
 
-    public int getGraduationYear() {
+    public int getGraduationYear()
+    {
         return graduationYear;
     }
 
-    public void setGraduationYear(int graduationYear) {
+    public void setGraduationYear(int graduationYear)
+    {
         this.graduationYear = graduationYear;
     }
 
+    /**
+     * Returns a string representation of the player object.
+     */
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "Name: " + firstName +  ", " + lastName + " | Position: " + position + " | Player Number: " + playerNumber + " | Graduation Year: " + graduationYear;
     }
 }

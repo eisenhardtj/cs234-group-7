@@ -9,6 +9,13 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class represents a panel for displaying charts of freethrow and three point shot data.
+ * Contains functionality for searching for a player, searching for a date, and viewing cumulative
+ * data.
+ * 
+ * Author: Cole Aydelotte
+ */
 public class ChartPanel extends JPanel
 {
     private SQLConnection conn = new SQLConnection();
@@ -19,10 +26,16 @@ public class ChartPanel extends JPanel
     private JPanel chartPanel;
     private JLabel noDataLabel;
 
+    /**
+     * Constructs a new ChartPanel with necessary components and functionality.
+     * Contains two charts for displaying freethrow and three point shot data, a text field
+     * for searching for a player, a search button, and a cumulative button for viewing
+     * cumulative data.
+     */
     public ChartPanel()
     {
         setLayout(new BorderLayout());
-    
+
         inputPanel = new JPanel();
         inputPanel.setLayout(new FlowLayout());
         inputPanel.add(new JLabel("Player Search: "));
@@ -39,34 +52,49 @@ public class ChartPanel extends JPanel
         inputPanel.add(dateSearchButton);
         cumulativeButton = new JButton("View Cumulative Chart");
         inputPanel.add(cumulativeButton);
-    
+
         chart1 = createChart("Freethrow chart", "freethrows", firstNameSearchField.getText(), lastNameSearchField.getText());
         chart2 = createChart("Three point chart", "threepointshots", firstNameSearchField.getText(), lastNameSearchField.getText());
-    
+
         chartPanel = new JPanel(new GridLayout(1, 2));
         if (chart1 != null)
         {
-            chartPanel.add(new XChartPanel<>(chart1));
+            XChartPanel<CategoryChart> chart1Panel = new XChartPanel<>(chart1);
+            chartPanel.add(chart1Panel, BorderLayout.WEST);
         }
         if (chart2 != null)
         {
-            chartPanel.add(new XChartPanel<>(chart2));
+            XChartPanel<CategoryChart> chart2Panel = new XChartPanel<>(chart2);
+            chartPanel.add(chart2Panel, BorderLayout.EAST);
         }
-    
+
+        setSize(3024, 1964);
         add(chartPanel, BorderLayout.CENTER);
+
         add(inputPanel, BorderLayout.PAGE_END);
 
-        noDataLabel = new JLabel("No data available"); // Initialize the JLabel
-        noDataLabel.setHorizontalAlignment(SwingConstants.CENTER); // Center the text
-        noDataLabel.setFont(new Font(noDataLabel.getFont().getName(), Font.BOLD, 16)); // Set font
-        noDataLabel.setForeground(Color.RED); // Set text color
+        noDataLabel = new JLabel("No data available");
+        noDataLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        noDataLabel.setFont(new Font(noDataLabel.getFont().getName(), Font.BOLD, 16));
+        noDataLabel.setForeground(Color.RED);
         chartPanel.add(noDataLabel);
-        noDataLabel.setVisible(false); // Initially invisible
+        noDataLabel.setVisible(false);
 
-        searchButton.addActionListener(e -> {
+        validate();
+        repaint();
+
+        /**
+         * Action listener for the search button. Updates the charts based on the player's name.
+         */
+        searchButton.addActionListener(e ->
+        {
             updateCharts();
         });
 
+        /**
+         * Action listener for the date search button. Searches for data based on the date entered.
+         * Displays the data in a table format.
+         */
         dateSearchButton.addActionListener(e ->
         {
             String date = dateSearchField.getText();
@@ -99,8 +127,8 @@ public class ChartPanel extends JPanel
                     tablePanel2.add(new JScrollPane(table2), BorderLayout.CENTER);
 
                     chartPanel.removeAll();
-                    chartPanel.add(tablePanel1, BorderLayout.WEST);
-                    chartPanel.add(tablePanel2, BorderLayout.EAST);
+                    chartPanel.add(tablePanel1);
+                    chartPanel.add(tablePanel2);
                     add(inputPanel, BorderLayout.PAGE_END);
                     revalidate();
                     repaint();
@@ -108,6 +136,9 @@ public class ChartPanel extends JPanel
             }
         });
 
+        /**
+         * Action listener for the cumulative button.
+         */
         cumulativeButton.addActionListener(e ->
         {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -143,8 +174,8 @@ public class ChartPanel extends JPanel
                         averagePanel2.add(new JScrollPane(table2), BorderLayout.CENTER);
 
                         chartPanel.removeAll();
-                        chartPanel.add(averagePanel1, BorderLayout.WEST);
-                        chartPanel.add(averagePanel2, BorderLayout.EAST);
+                        chartPanel.add(averagePanel1);
+                        chartPanel.add(averagePanel2);
                         chartPanel.revalidate();
                         chartPanel.repaint();
                     }
@@ -163,6 +194,9 @@ public class ChartPanel extends JPanel
         });
     }
 
+    /**
+     * Calculates the average shooting percentage for freethrows or three point shots.
+     */
     private String calculateAveragePercentage(String type)
     {
         double totalPercentage = 0.0;
@@ -174,8 +208,7 @@ public class ChartPanel extends JPanel
             if (percentage != null)
             {
                 double value = percentage.doubleValue();
-                if (value >= 0)
-                {
+                if (value >= 0){
                     totalPercentage += value;
                     totalCount++;
                 }
@@ -192,6 +225,11 @@ public class ChartPanel extends JPanel
         }
     }
 
+    /**
+     * Creates a chart based on the type of shot (freethrows or three point shots),
+     * Can also create a chart with the first and last name. Finding 
+     * the player's statistics based on the date of the session.
+     */
     private CategoryChart createChart(String title, String type, String firstName, String lastName)
     {
         String seriesName = "";
@@ -232,6 +270,7 @@ public class ChartPanel extends JPanel
             chart.getStyler().setPlotGridLinesVisible(false);
             chart.getStyler().setChartFontColor(XChartSeriesColors.BLACK);
             chart.getStyler().setXAxisLabelRotation(45);
+            chart.getStyler().setYAxisDecimalPattern("#.##");
     
             String[] sessionDates = getSessionDates(type);
             List<String> sessionDatesList = new ArrayList<>();
@@ -241,8 +280,6 @@ public class ChartPanel extends JPanel
                 sessionDatesList.add(date);
                 yData.add(conn.findStatisticsBasedOnDate(date, type));
             }
-            System.out.println(sessionDatesList);
-            System.out.println(yData);
             if (yData.isEmpty())
             {
                 return null;
@@ -265,6 +302,7 @@ public class ChartPanel extends JPanel
             chart.getStyler().setPlotGridLinesVisible(false);
             chart.getStyler().setChartFontColor(XChartSeriesColors.BLACK);
             chart.getStyler().setXAxisLabelRotation(45);
+            chart.getStyler().setYAxisDecimalPattern("#.##");
     
             List<String> sessionDatesList = new ArrayList<>();
             List<Double> yData = new ArrayList<>();
@@ -276,8 +314,6 @@ public class ChartPanel extends JPanel
                     sessionDatesList.add(date);
                     yData.add(conn.findPlayerStatisticsBasedOnDate(type, date, firstName, lastName));
                 }
-                System.out.println(sessionDatesList);
-                System.out.println(yData);
                 if (yData.isEmpty())
                 {
                     return null;
@@ -293,6 +329,9 @@ public class ChartPanel extends JPanel
         }
     }
 
+    /**
+     * Creates a table with cumulative data for freethrows or three point shots.
+     */
     public JTable createCumulativeDataTable(String title, String type)
     {
         String[] columnNames = {"Date", "Shot Percentage"};
@@ -306,6 +345,9 @@ public class ChartPanel extends JPanel
         return table;
     }
 
+    /**
+     * Generates cumulative data for freethrows or three point shots.
+     */
     private String[][] generateCumulativeData(String type)
     {
         List<String> sessionDatesList = new ArrayList<>();
@@ -337,6 +379,9 @@ public class ChartPanel extends JPanel
         return data;
     }
 
+    /**
+     * Creates a table with data for freethrows or three point shots based on the date entered.
+     */
     public JTable createDataTable(String title, String type, String date)
     {
         String[] columnNames = {"Date", "Shot Percentage"};
@@ -350,6 +395,9 @@ public class ChartPanel extends JPanel
         return table;
     }
 
+    /**
+     * Generates data for freethrows or three point shots based on the date entered.
+     */
     private String[][] generateData(String type, String date)
     {
         List<String> sessionDatesList = new ArrayList<>();
@@ -374,12 +422,17 @@ public class ChartPanel extends JPanel
         return data;
     }
 
+    /**
+     * Gets the session dates for freethrows or three point shots.
+     */
     private String[] getSessionDates(String type)
     {
         return conn.getDates(15, type);
     }
     
-
+    /**
+     * Updates the charts based on the player's name.
+     */
     public void updateCharts()
     {
         if (firstNameSearchField.getText().isEmpty() || lastNameSearchField.getText().isEmpty())
@@ -409,11 +462,16 @@ public class ChartPanel extends JPanel
                 noDataLabel.setVisible(false);
             }
             chartPanel.removeAll();
-            chartPanel.add(new XChartPanel<>(chart1));
-            chartPanel.add(new XChartPanel<>(chart2));
+            XChartPanel<CategoryChart> chart1Panel = new XChartPanel<>(chart1);
+            chart1Panel.setPreferredSize(new Dimension(800, 500));
+            chartPanel.add(chart1Panel);
+            XChartPanel<CategoryChart> chart2Panel = new XChartPanel<>(chart2);
+            chart2Panel.setPreferredSize(new Dimension(800, 500));
+            chartPanel.add(chart2Panel);
             add(inputPanel, BorderLayout.PAGE_END);
             revalidate();
             repaint();
         }
     }
 }
+

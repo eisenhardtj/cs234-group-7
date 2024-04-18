@@ -5,8 +5,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import javax.naming.spi.DirStateFactory.Result;
-
 /**
  * Series of back-end methods that connect to the database and retrieve or modify 
  * data from the database's tables. The methods in this class are also used to keep 
@@ -39,6 +37,10 @@ public class SQLConnection
         }
     }
 
+    /**
+     * Closes the connection to the database.
+     * @param conn - the connection to be closed.
+     */
     public void closeConnection(Connection conn)
     {
         try
@@ -53,6 +55,14 @@ public class SQLConnection
         }
     }
 
+    /**
+     * Adds a player to the TeamRoster table in the database.
+     * @param firstName
+     * @param lastName
+     * @param number
+     * @param position
+     * @param gradYear
+     */
     public void addPlayer(String firstName, String lastName, int number, String position, int gradYear) 
     {
         connection = openConnection();
@@ -83,6 +93,11 @@ public class SQLConnection
         }
     }
 
+    /**
+     * Archives a player from the TeamRoster table to the ArchivePlayers table.
+     * @param firstName
+     * @param lastName
+     */
     public void archivePlayer(String firstName, String lastName)
     {
         connection = openConnection();
@@ -129,13 +144,19 @@ public class SQLConnection
         }
     }
 
-    //Implement remove player function for archive players table/tab
+    /**
+     * Removes a player from the TeamRoster table in the database.
+     * @param firstName
+     * @param lastName
+     */
     public void removePlayer(String firstName, String lastName) 
     {
         PreparedStatement removeQuery;
         Connection connection = openConnection();
-        try {
-            if (connection == null) {
+        try
+        {
+            if (connection == null)
+            {
                 System.out.println("Failed to establish database connection.");
                 return;
             }
@@ -147,26 +168,40 @@ public class SQLConnection
             int rowsAffected = removeQuery.executeUpdate();
             removeQuery.close();
 
-            if (rowsAffected > 0) {
+            if (rowsAffected > 0)
+            {
                 System.out.println("Removed " + firstName + ", " + lastName + " from the roster.");
-            } else {
+            }
+            else
+            {
                 System.out.println("No matching player found in the roster.");
             }
 
-        } catch (SQLException e) {
+        }
+        catch (SQLException e)
+        {
             e.printStackTrace();
             System.out.println("\nFailed to remove player from database.");
-        } finally {
+        }
+        finally
+        {
             closeConnection(connection);
         }
     }
 
+    /**
+     * Removes a player from the ArchivePlayers table in the database.
+     * @param firstName
+     * @param lastName
+     */
     public void removePlayerArchive(String firstName, String lastName) 
     {
         PreparedStatement removeQuery;
         Connection connection = openConnection();
-        try {
-            if (connection == null) {
+        try
+        {
+            if (connection == null)
+            {
                 System.out.println("Failed to establish database connection.");
                 return;
             }
@@ -178,21 +213,37 @@ public class SQLConnection
             int rowsAffected = removeQuery.executeUpdate();
             removeQuery.close();
 
-            if (rowsAffected > 0) {
+            if (rowsAffected > 0)
+            {
                 System.out.println("Removed " + firstName + ", " + lastName + " from the archived players.");
-            } else {
+            }
+            else
+            {
                 System.out.println("No matching player found in the roster.");
             }
 
-        } catch (SQLException e) {
+        }
+        catch (SQLException e)
+        {
             e.printStackTrace();
             System.out.println("\nFailed to remove player from database.");
-        } finally {
+        }
+        finally
+        {
             closeConnection(connection);
         }
     }
 
-
+    /**
+     * Edits a player in the TeamRoster table in the database.
+     * @param originalFirstName
+     * @param originalLastName
+     * @param firstName
+     * @param lastName
+     * @param number
+     * @param position
+     * @param gradYear
+     */
     public void editPlayer(String originalFirstName, String originalLastName, String firstName, String lastName, int number, String position, int gradYear)
     {
         connection = openConnection();
@@ -224,6 +275,17 @@ public class SQLConnection
         }
     }
 
+    /**
+     * Edits a player in the ArchivePlayers table in the database.
+     * @param originalFirstName
+     * @param originalLastName
+     * @param firstName
+     * @param lastName
+     * @param date
+     * @param attempted
+     * @param made
+     * @param typeOfSession
+     */
     public void editSession(String originalFirstName, String originalLastName, String firstName, String lastName, String date, int attempted, int made, String typeOfSession)
     {
         connection = openConnection();
@@ -261,6 +323,14 @@ public class SQLConnection
         }
     }
 
+    /**
+     * Adds a free throw session to the freethrows table in the database.
+     * @param firstName
+     * @param lastName
+     * @param date
+     * @param attempted
+     * @param made
+     */
     public void addFreeThrow(String firstName, String lastName, String date, int attempted, int made)
     {
         connection = openConnection();
@@ -292,6 +362,15 @@ public class SQLConnection
         }
     }
 
+    /**
+     * Adds a two point session to the twopointshots table in the database.
+     * @param firstName
+     * @param lastName
+     * @param date
+     * @param attempted
+     * @param made
+     * @param location
+     */
     public void addThreePoint(String firstName, String lastName, String date, int attempted, int made, String location)
     {
         connection = openConnection();
@@ -324,6 +403,10 @@ public class SQLConnection
         }
     }
 
+    /**
+     * Adds a three point session to the threepointshots table in the database.
+     * @return
+     */
     public ResultSet getPlayers()
     {
         connection = openConnection();
@@ -346,6 +429,12 @@ public class SQLConnection
         return null;
     }
 
+    /**
+     * Adds a two point session to the twopointshots table in the database.
+     * @param firstName
+     * @param lastName
+     * @return
+     */
     public ResultSet searchByName(String firstName, String lastName)
     {
         connection = openConnection();
@@ -370,6 +459,12 @@ public class SQLConnection
         return null;
     }
 
+    /**
+     * Searches for a player in the database based on the date and type of session.
+     * @param date
+     * @param typeOfSession
+     * @return
+     */
     public ResultSet searchByDate(String date, String typeOfSession)
     {
         connection = openConnection();
@@ -393,38 +488,50 @@ public class SQLConnection
         return null;
     }
 
+    /**
+     * Searches for a player in the database based on the date and type of session.
+     * @param limit
+     * @param typeOfSession
+     * @return
+     */
     public String[] getDates(int limit, String typeOfSession)
     {
-    Connection connection = null;
-    try
-    {
-        connection = openConnection();
-        String sql = "SELECT DISTINCT date FROM " + typeOfSession + " LIMIT " + limit + ";";
-        PreparedStatement getDates = connection.prepareStatement(sql);
-        ResultSet rs = getDates.executeQuery();
-        ArrayList<String> datesList = new ArrayList<>();
-        while (rs.next())
+        Connection connection = null;
+        try
         {
-            datesList.add(rs.getString("date"));
+            connection = openConnection();
+            String sql = "SELECT DISTINCT date FROM " + typeOfSession + " LIMIT " + limit + ";";
+            PreparedStatement getDates = connection.prepareStatement(sql);
+            ResultSet rs = getDates.executeQuery();
+            ArrayList<String> datesList = new ArrayList<>();
+            while (rs.next())
+            {
+                datesList.add(rs.getString("date"));
+            }
+            String[] dates = datesList.toArray(new String[0]);
+            return dates;
         }
-        String[] dates = datesList.toArray(new String[0]);
-        return dates;
-    }
-    catch (SQLException e)
-    {
-        e.printStackTrace();
-        System.out.println("\nFailed to get dates from the database.");
-    }
-    finally
-    {
-        if (connection != null)
+        catch (SQLException e)
         {
-            closeConnection(connection);
+            e.printStackTrace();
+            System.out.println("\nFailed to get dates from the database.");
         }
+        finally
+        {
+            if (connection != null)
+            {
+                closeConnection(connection);
+            }
+        }
+        return null;
     }
-    return null;
-}
 
+    /**
+     * Searches for a player in the database based on the date and type of session.
+     * @param date
+     * @param typeOfSession
+     * @return
+     */
     public Double findStatisticsBasedOnDate(String date, String typeOfSession) 
     {
         connection = openConnection();
@@ -457,6 +564,14 @@ public class SQLConnection
         return null;
     }
     
+    /**
+     * Searches for a player in the database based on the date and type of session.
+     * @param firstName
+     * @param lastName
+     * @param type
+     * @param limit
+     * @return
+     */
     public String[] searchPlayerDates(String firstName, String lastName, String type, int limit)
     {
         connection = openConnection();
@@ -488,7 +603,14 @@ public class SQLConnection
         return null;
     }
 
-
+    /**
+     * Searches for a player in the database based on the date and type of session.
+     * @param type
+     * @param date
+     * @param firstName
+     * @param lastName
+     * @return
+     */
     public double findPlayerStatisticsBasedOnDate(String type, String date, String firstName, String lastName) 
     {
         connection = openConnection();
@@ -498,11 +620,8 @@ public class SQLConnection
             String sql = "SELECT * FROM " + type + " WHERE date = ? AND first_name = ? AND last_name = ?;";
             PreparedStatement searchQuery = connection.prepareStatement(sql);
             searchQuery.setString(1, date);
-            System.out.println(date);
             searchQuery.setString(2, firstName);
-            System.out.println(firstName);
             searchQuery.setString(3, lastName);
-            System.out.println(lastName);
             System.out.println(searchQuery.toString());
             ResultSet rs = searchQuery.executeQuery();
             while(rs.next())
@@ -510,7 +629,6 @@ public class SQLConnection
                 attempted += rs.getInt("attempted");
                 made += rs.getInt("made");
             }
-            System.out.println((double) made / (double) attempted);
             return (double) made / (double) attempted;
         } 
         catch(SQLException e) 
@@ -525,6 +643,12 @@ public class SQLConnection
         return 0.0;
     }
 
+    /**
+     * Searches for a player in the database based on the date and type of session.
+     * @param date
+     * @param type
+     * @return
+     */
     public String[] searchDate(String date, String type)
     {
         connection = openConnection();
@@ -555,6 +679,14 @@ public class SQLConnection
         return null;
     }
 
+    /**
+     * Searches for a player in the database based on the date and type of session.
+     * @param date
+     * @param firstName
+     * @param lastName
+     * @param typeOfSession
+     * @return
+     */
     public double[] searchByDateAndPlayerNames(String date, String firstName, String lastName, String typeOfSession)
     {
         connection = openConnection();

@@ -4,16 +4,28 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+/**
+ * This class is responsible for persisting data from the database to an ArrayList.
+ * 
+ * Author: Cole Aydelotte
+ */
 public class PersistData 
 {
     private SQLConnection conn;
     private Connection connection;
 
+    /**
+     * Constructs a new PersistData object.
+     */
     public PersistData()
     {
         conn = new SQLConnection();
     }
 
+    /**
+     * This method retrieves data from the database and stores it in an ArrayList of Player objects.
+     * @return ArrayList<Player> - an ArrayList of Player objects
+     */
     public ArrayList<String[]> dataToArrayListTeamRoster()
     {
         ArrayList<String[]> players = new ArrayList<>();
@@ -52,6 +64,10 @@ public class PersistData
         return null;
     }
 
+    /**
+     * This method retrieves data from the database and stores it in an ArrayList of ArchivedPlayer objects.
+     * @return ArrayList<ArchivedPlayer> - an ArrayList of ArchivedPlayer objects
+     */
     public ArrayList<String[]> dataToArrayListArchivePlayers()
     {
         ArrayList<String[]> archivedPlayers = new ArrayList<>();
@@ -90,6 +106,10 @@ public class PersistData
         return null;
     }
 
+    /**
+     * This method retrieves data from the database and stores it in an ArrayList of String arrays.
+     * @return ArrayList<String[]> - an ArrayList of String arrays
+     */
     public ArrayList<String[]> dataToArrayListThreePoints()
     {
         ArrayList<String[]> threePointSessions = new ArrayList<>();
@@ -129,6 +149,10 @@ public class PersistData
         return null;
     }
 
+    /**
+     * This method retrieves data from the database and stores it in an ArrayList of String arrays.
+     * @return ArrayList<String[]> - an ArrayList of String arrays
+     */
     public ArrayList<String[]> dataToArrayListFreeThrows()
     {
         ArrayList<String[]> freeThrowSessions = new ArrayList<>();

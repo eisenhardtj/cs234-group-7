@@ -1,3 +1,8 @@
+/**
+ * This class is used to store the data of a player's three point shots.
+ * 
+ * Author: Jalil Rodriquez
+ */
 public class ThreePoint 
 {
     private int ThreePointsMade;
@@ -7,6 +12,15 @@ public class ThreePoint
     private String lastName;
     private String location;
 
+    /**
+     * Constructs a new ThreePoint object.
+     * @param firstName
+     * @param lastName
+     * @param date
+     * @param Attempted
+     * @param Made
+     * @param location
+     */
     public ThreePoint(String firstName, String lastName, String date, int Attempted, int Made, String location)
     {
         this.firstName = firstName;
@@ -17,6 +31,7 @@ public class ThreePoint
         this.location = location;
     }
 
+    // Getters and Setters
     public String getFirstName()
     {
         return firstName;
@@ -90,6 +105,9 @@ public class ThreePoint
         return Math.round(((double) ThreePointsMade / ThreePointsAttempted) * 100);
     }
 
+    /**
+     * Returns a string representation of the object.
+     */
     @Override
     public String toString()
     {

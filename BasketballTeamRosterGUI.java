@@ -1,4 +1,6 @@
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -7,6 +9,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+/**
+ * This class represents the main GUI for the basketball team roster. It contains
+ * functionality for adding, archiving, and editing players, as well as sorting
+ * players by last name or player number. It also contains functionality for
+ * increasing and decreasing the font size of the GUI.
+ * 
+ * Authors: Jeffery Eisenhardt, Christine Colvin
+ */
 public class BasketballTeamRosterGUI extends JFrame {
 
     private ArrayList<Player> players;
@@ -18,7 +28,6 @@ public class BasketballTeamRosterGUI extends JFrame {
     private JButton decreaseFontSizeButton;
     private JButton addButton, archiveButton, editButton;
     private JComboBox<String> sortingComboBox; // Added JComboBox for sorting methods
-    private Player selectedPlayer;
     private SQLConnection conn;
     private ArchivedPanel archivedPanel;
     private FreeThrowPanel freeThrowPanel;
@@ -26,7 +35,15 @@ public class BasketballTeamRosterGUI extends JFrame {
     private PersistData persistData;
     ChartPanel chartPanel;
 
-    public BasketballTeamRosterGUI() {
+    /**
+     * Constructs a new BasketballTeamRosterGUI with necessary components and functionality.
+     * Contains a table for displaying player information, text fields for inputting player
+     * information, buttons for adding, archiving, and editing players, and a combo box for
+     * sorting players by last name or player number. Contains action listeners for each button,
+     * table, or combo box.
+     */
+    public BasketballTeamRosterGUI()
+    {
         super("Moravian Woman's Basketball Team Roster");
         players = new ArrayList<>();
         tableModel = new DefaultTableModel();
@@ -61,9 +78,15 @@ public class BasketballTeamRosterGUI extends JFrame {
 
         repopulateLists();
 
-        addButton.addActionListener(new ActionListener() {
+        /**
+         * Action listener for the player table. When a row is selected, the text fields
+         * are populated with the selected player's information.
+         */
+        addButton.addActionListener(new ActionListener()
+        {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e)
+            {
                 String firstName = firstNameField.getText();
                 String lastName = lastNameField.getText();
                 String position = positionField.getText();
@@ -77,11 +100,18 @@ public class BasketballTeamRosterGUI extends JFrame {
             }
         });
 
-        archiveButton.addActionListener(new ActionListener() {
+        /**
+         * Action listener for the player table. When a row is selected, the text fields
+         * are populated with the selected player's information.
+         */
+        archiveButton.addActionListener(new ActionListener()
+        {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e)
+            {
                 int selectedIndex = playerTable.getSelectedRow();
-                if (selectedIndex != -1) {
+                if (selectedIndex != -1)
+                {
                     archivedPanel.addToListModel(players.get(selectedIndex));
                     String firstName = (String) tableModel.getValueAt(selectedIndex, 0);
                     String lastName = (String) tableModel.getValueAt(selectedIndex, 1);
@@ -93,9 +123,15 @@ public class BasketballTeamRosterGUI extends JFrame {
             }
         });
 
-        editButton.addActionListener(new ActionListener() {
+        /**
+         * Action listener for the player table. When a row is selected, the text fields
+         * are populated with the selected player's information.
+         */
+        editButton.addActionListener(new ActionListener()
+        {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e)
+            {
                 int selectedIndex = playerTable.getSelectedRow();
                 if (selectedIndex != -1) {
                     String firstName = firstNameField.getText();
@@ -114,28 +150,67 @@ public class BasketballTeamRosterGUI extends JFrame {
             }
         });
 
-        increaseFontSizeButton.addActionListener(new ActionListener() {
+        /**
+         * Action listener for the player table. When a row is selected, the text fields
+         * are populated with the selected player's information.
+         */
+        increaseFontSizeButton.addActionListener(new ActionListener()
+        {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e)
+            {
                 increaseFontSize();
             }
         });
 
-        decreaseFontSizeButton.addActionListener(new ActionListener() {
+        /**
+         * Action listener for the player table. When a row is selected, the text fields
+         * are populated with the selected player's information.
+         */
+        decreaseFontSizeButton.addActionListener(new ActionListener()
+        {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e)
+            {
                 decreaseFontSize();
             }
         });
 
-        sortingComboBox.addActionListener(new ActionListener() {
+        /**
+         * Action listener for the player table. When a row is selected, the text fields
+         * are populated with the selected player's information.
+         */
+        sortingComboBox.addActionListener(new ActionListener()
+        {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e)
+            {
                 String selectedSortOption = (String) sortingComboBox.getSelectedItem();
-                if (selectedSortOption.equals("Sort by Last Name")) {
+                if (selectedSortOption.equals("Sort by Last Name"))
+                {
                     sortPlayersByLastName();
-                } else if (selectedSortOption.equals("Sort by Player Number")) {
+                } else if (selectedSortOption.equals("Sort by Player Number"))
+                {
                     sortPlayersByPlayerNumber();
+                }
+            }
+        });
+
+        /**
+         * List selection listener for the player table. When a row is selected, the text fields
+         * are populated with the selected player's information.
+         */
+        playerTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                int selectedRow = playerTable.getSelectedRow();
+                if (selectedRow != -1) {
+                    Player selectedPlayer = players.get(selectedRow);
+                    firstNameField.setText(selectedPlayer.getFirstName());
+                    lastNameField.setText(selectedPlayer.getLastName());
+                    positionField.setText(selectedPlayer.getPosition());
+                    playerNumberField.setText(String.valueOf(selectedPlayer.getPlayerNumber()));
+                    graduationYearField.setText(String.valueOf(selectedPlayer.getGraduationYear()));
                 }
             }
         });
@@ -173,6 +248,7 @@ public class BasketballTeamRosterGUI extends JFrame {
         tabbedPane.addTab("Free Throws", freeThrowPanel);
         tabbedPane.addTab("Three Pointers", threePointPanel);
         tabbedPane.addTab("Statistics", chartPanel);
+        chartPanel.updateCharts();
 
         setContentPane(tabbedPane);
 
@@ -181,13 +257,22 @@ public class BasketballTeamRosterGUI extends JFrame {
         setVisible(true);
     }
 
-    private void addToTableModel(Player player) {
+    /**
+     * Adds a player to the table model.
+     * @param player the player to add.
+     */
+    private void addToTableModel(Player player)
+    {
         Object[] rowData = {player.getFirstName(), player.getLastName(), player.getPosition(),
                 player.getPlayerNumber(), player.getGraduationYear()};
         tableModel.addRow(rowData);
     }
 
-    private void updateTableModel() {
+    /**
+     * Updates the table model with the current player data.
+     */
+    private void updateTableModel()
+    {
         tableModel.setRowCount(0); // Clear existing data
         for (Player player : players) {
             Object[] rowData = {player.getFirstName(), player.getLastName(), player.getPosition(),
@@ -196,7 +281,11 @@ public class BasketballTeamRosterGUI extends JFrame {
         }
     }
 
-    private void clearFields() {
+    /**
+     * Clears the text fields.
+     */
+    private void clearFields()
+    {
         firstNameField.setText("");
         lastNameField.setText("");
         positionField.setText("");
@@ -204,17 +293,29 @@ public class BasketballTeamRosterGUI extends JFrame {
         graduationYearField.setText("");
     }
 
-    private void sortPlayersByLastName() {
+    /**
+     * Sorts the players by last name.
+     */
+    private void sortPlayersByLastName()
+    {
         Collections.sort(players, Comparator.comparing(Player::getLastName));
         updateTableModel();
     }
 
-    private void sortPlayersByPlayerNumber() {
+    /**
+     * Sorts the players by player number.
+     */
+    private void sortPlayersByPlayerNumber()
+    {
         Collections.sort(players, Comparator.comparingInt(Player::getPlayerNumber));
         updateTableModel();
     }
 
-    private void increaseFontSize() {
+    /**
+     * Increases the font size of the GUI components.
+     */
+    private void increaseFontSize()
+    {
         Font currentFont = playerTable.getFont();
         float currentSize = currentFont.getSize2D();
         float newSize = currentSize + 5f;
@@ -239,7 +340,12 @@ public class BasketballTeamRosterGUI extends JFrame {
         Dimension newSizeDimension = new Dimension((int) (getWidth() * 1.1), (int) (getHeight() * 1.1));
         setPreferredSize(newSizeDimension);
     }
-    private void decreaseFontSize() {
+
+    /**
+     * Decreases the font size of the GUI components.
+     */
+    private void decreaseFontSize()
+    {
         Font currentFont = playerTable.getFont();
         float currentSize = currentFont.getSize2D();
         float newSize = currentSize - 5f;
@@ -265,29 +371,32 @@ public class BasketballTeamRosterGUI extends JFrame {
         setPreferredSize(newSizeDimension);
     }
 
-    private void setFontSize(Font font) {
-        playerTable.setFont(font);
-        firstNameField.setFont(font);
-        lastNameField.setFont(font);
-        positionField.setFont(font);
-        playerNumberField.setFont(font);
-        graduationYearField.setFont(font);
-    }
-
-    private void repopulateLists() {
+    /**
+     * Repopulates the player list from the database.
+     */
+    private void repopulateLists()
+    {
         ArrayList<String[]> data;
         data = persistData.dataToArrayListTeamRoster();
-        for (String[] player : data) {
+        for (String[] player : data)
+        {
             Player newPlayer = new Player(player[0], player[1], player[3], Integer.parseInt(player[2]), Integer.parseInt(player[4]));
             players.add(newPlayer);
             addToTableModel(newPlayer);
         }
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
+    /**
+     * Main method to run the GUI.
+     * @param args command line arguments
+     */
+    public static void main(String[] args)
+    {
+        SwingUtilities.invokeLater(new Runnable()
+        {
             @Override
-            public void run() {
+            public void run()
+            {
                 new BasketballTeamRosterGUI();
             }
         });

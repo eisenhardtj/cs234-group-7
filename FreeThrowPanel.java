@@ -4,6 +4,9 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -17,6 +20,14 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
+/**
+ * This class represents a panel for displaying free throw information. Has
+ * functionality for adding free throw checks, increasing/decreasing font size,
+ * editing free throw sessions, and sorting free throw sessions by last name,
+ * points made, date, or success rate.
+ * 
+ * Author: Cole Aydelotte
+ */
 public class FreeThrowPanel extends JPanel
 {
     private DefaultTableModel tableModel;
@@ -30,6 +41,9 @@ public class FreeThrowPanel extends JPanel
     private ArrayList<Points> freeThrowList;
     private ChartPanel chartPanel;
 
+    /**
+     * Constructs a new FreeThrowPanel with necessary components and functionality.
+     */
     public FreeThrowPanel()
     {
         tableModel = new DefaultTableModel();
@@ -38,11 +52,12 @@ public class FreeThrowPanel extends JPanel
         tableModel.addColumn("Date");
         tableModel.addColumn("Attempted");
         tableModel.addColumn("Made");
+        tableModel.addColumn("Success Rate");
 
         freeThrowTable = new JTable(tableModel);
-        freeThrowTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); // Set to OFF to control column widths
+        freeThrowTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-        int[] columnWidths = {150, 150, 150, 150, 150};
+        int[] columnWidths = {150, 150, 150, 150, 150, 150};
         setColumnWidths(freeThrowTable.getColumnModel(), columnWidths);
 
         freeThrowTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -53,7 +68,7 @@ public class FreeThrowPanel extends JPanel
         attemptedField = new JTextField(15);
         madeField = new JTextField(15);
 
-        sortingComboBox = new JComboBox<>(new String[]{"Sort by Last Name", "Sort by Points Made", "Sort by Date"});
+        sortingComboBox = new JComboBox<>(new String[]{"Sort by Last Name", "Sort by Points Made", "Sort by Date", "Sort by Success Rate"});
         addPointCheckButton = new JButton("Add Free Throw Check");
         increaseFontSizeButton = new JButton("Increase Font Size");
         decreaseFontSizeButton = new JButton("Decrease Font Size");
@@ -80,6 +95,10 @@ public class FreeThrowPanel extends JPanel
         buttonPanel.add(decreaseFontSizeButton);
         buttonPanel.add(editSessionButton);
 
+        /**
+         * Action listener for the addPointCheckButton. Adds a new free throw check to the
+         * table and database. Updates the table model and chart panel if it exists.
+         */
         addPointCheckButton.addActionListener(new ActionListener()
         {
             @Override
@@ -95,6 +114,10 @@ public class FreeThrowPanel extends JPanel
             }
         });
 
+        /**
+         * Action listener for the editSessionButton. Edits the selected free throw session
+         * with the information in the text fields. Updates the table model and database.
+         */
         editSessionButton.addActionListener(new ActionListener()
         {
             @Override
@@ -114,6 +137,10 @@ public class FreeThrowPanel extends JPanel
             }
         });
 
+        /**
+         * Action listener for the increaseFontSizeButton. Increases the font size of the
+         * table and text fields by 5.
+         */
         increaseFontSizeButton.addActionListener(new ActionListener()
         {
             @Override
@@ -123,6 +150,10 @@ public class FreeThrowPanel extends JPanel
             }
         });
 
+        /**
+         * Action listener for the decreaseFontSizeButton. Decreases the font size of the
+         * table and text fields by 5.
+         */
         decreaseFontSizeButton.addActionListener(new ActionListener()
         {
             @Override
@@ -132,6 +163,10 @@ public class FreeThrowPanel extends JPanel
             }
         });
 
+        /**
+         * List selection listener for the freeThrowTable. Displays the selected free throw
+         * session in the text fields.
+         */
         freeThrowTable.getSelectionModel().addListSelectionListener(new ListSelectionListener()
         {
             @Override
@@ -146,31 +181,76 @@ public class FreeThrowPanel extends JPanel
             }
         });
 
+        /**
+         * Action listener for the sortingComboBox. Sorts the free throw sessions based on
+         * the selected sorting option.
+         */
+        sortingComboBox.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                String selectedSorting = (String) sortingComboBox.getSelectedItem();
+                if (selectedSorting != null)
+                {
+                    switch (selectedSorting)
+                    {
+                        case "Sort by Last Name":
+                            sortByLastName();
+                            break;
+                        case "Sort by Points Made":
+                            sortByPointsMadeDescending();
+                            break;
+                        case "Sort by Date":
+                            sortByDate();
+                            break;
+                        case "Sort by Success Rate":
+                            sortBySuccessRateDescending();
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        });
+
         setLayout(new BorderLayout());
         add(inputPanel, BorderLayout.WEST);
         add(new JScrollPane(freeThrowTable), BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
         repopulateTable();
+        updateTableModel();
     }
 
+    /**
+     * Adds a free throw session to the list model and updates the table model.
+     * @param point The free throw session to add.
+     */
     private void addToListModel(Points point)
     {
         freeThrowList.add(point);
         updateTableModel();
     }
 
+    /**
+     * Updates the table model with the current free throw session data.
+     * Called when the table needs to be repopulated.
+     */
     private void updateTableModel()
     {
-        // Clear existing table data
         tableModel.setRowCount(0);
-        // Add updated data to table model
         for (Points point : freeThrowList)
         {
-            Object[] rowData = {point.getFirstName(), point.getLastName(), point.getDate(), point.getFreeThrowsAttempted(), point.getFreeThrowsMade()};
+            double average = (double) point.getFreeThrowsMade() / point.getFreeThrowsAttempted();
+            average = Math.round(average * 100.0) / 100.0;
+            Object[] rowData = {point.getFirstName(), point.getLastName(), point.getDate(), point.getFreeThrowsAttempted(), point.getFreeThrowsMade(), average * 100 + "%"};
             tableModel.addRow(rowData);
         }
     }
 
+    /**
+     * Repopulates the free throw session list from the database.
+     */
     private void repopulateTable()
     {
         ArrayList<String[]> data = persistData.dataToArrayListFreeThrows();
@@ -183,6 +263,10 @@ public class FreeThrowPanel extends JPanel
         updateTableModel();
     }
 
+    /**
+     * Displays the selected free throw session in the text fields.
+     * @param point The free throw session to display.
+     */
     private void displaySelectedSession(Points point)
     {
         firstNameField.setText(point.getFirstName());
@@ -192,6 +276,9 @@ public class FreeThrowPanel extends JPanel
         madeField.setText(String.valueOf(point.getFreeThrowsMade()));
     }
 
+    /**
+     * Clears the text fields.
+     */
     private void clearFields()
     {
         firstNameField.setText("");
@@ -201,6 +288,11 @@ public class FreeThrowPanel extends JPanel
         madeField.setText("");
     }
 
+    /**
+     * Sets the column widths of the table.
+     * @param columnModel The column model of the table.
+     * @param widths The widths of the columns.
+     */
     private void setColumnWidths(TableColumnModel columnModel, int[] widths)
     {
         for (int i = 0; i < widths.length; i++)
@@ -209,6 +301,10 @@ public class FreeThrowPanel extends JPanel
         }
     }
 
+    /**
+     * Increases the font size of the table and text fields by 5.
+     * Called when the increaseFontSizeButton is clicked.
+     */
     private void increaseFontSize()
     {
         Font currentFont = freeThrowTable.getFont();
@@ -216,6 +312,10 @@ public class FreeThrowPanel extends JPanel
         setFontSize(newFont);
     }
 
+    /**
+     * Decreases the font size of the table and text fields by 5.
+     * Called when the decreaseFontSizeButton is clicked.
+     */
     private void decreaseFontSize()
     {
         Font currentFont = freeThrowTable.getFont();
@@ -223,6 +323,10 @@ public class FreeThrowPanel extends JPanel
         setFontSize(newFont);
     }
 
+    /**
+     * Sets the font size of the table and text fields.
+     * @param font The font to set.
+     */
     private void setFontSize(Font font)
     {
         freeThrowTable.setFont(font);
@@ -233,8 +337,81 @@ public class FreeThrowPanel extends JPanel
         madeField.setFont(font);
     }
 
+    /**
+     * Sets the chart panel for the free throw panel.
+     * @param chartPanel The chart panel to set.
+     */
     public void setChartPanel(ChartPanel chartPanel)
     {
         this.chartPanel = chartPanel;
     }
+
+    /**
+     * Sorts the free throw sessions by last name.
+     */
+    private void sortByLastName()
+    {
+        Collections.sort(freeThrowList, new Comparator<Points>()
+        {
+            @Override
+            public int compare(Points p1, Points p2)
+            {
+                return p1.getLastName().compareTo(p2.getLastName());
+            }
+        });
+    updateTableModel();
+    }
+
+    /**
+     * Sorts the free throw sessions by points made in descending order.
+     * Called when the "Sort by Points Made" option is selected.
+     */
+    private void sortByPointsMadeDescending()
+    {
+        Collections.sort(freeThrowList, new Comparator<Points>()
+        {
+            @Override
+            public int compare(Points p1, Points p2)
+            {
+                return Integer.compare(p2.getFreeThrowsMade(), p1.getFreeThrowsMade());
+            }
+        });
+        updateTableModel();
+    }
+    
+    /**
+     * Sorts the free throw sessions by date.
+     * Called when the "Sort by Date" option is selected.
+     */
+    private void sortByDate()
+    {
+        Collections.sort(freeThrowList, new Comparator<Points>()
+        {
+            @Override
+            public int compare(Points p1, Points p2)
+            {
+                return p2.getDate().compareTo(p1.getDate());
+            }
+        });
+        updateTableModel();
+    }
+
+    /**
+     * Sorts the free throw sessions by success rate in descending order.
+     * Called when the "Sort by Success Rate" option is selected.
+     */
+    private void sortBySuccessRateDescending()
+    {
+        Collections.sort(freeThrowList, new Comparator<Points>()
+        {
+            @Override
+            public int compare(Points p1, Points p2)
+            {
+                double successRate1 = (double) p1.getFreeThrowsMade() / p1.getFreeThrowsAttempted();
+                double successRate2 = (double) p2.getFreeThrowsMade() / p2.getFreeThrowsAttempted();
+                return Double.compare(successRate2, successRate1);
+            }
+        });
+        updateTableModel();
+    }    
 }
