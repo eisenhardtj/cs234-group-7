@@ -64,5 +64,9 @@ You will be prompted to enter a password enter 'project' case sensitive.
 
 ## Sixth Step
 
+### Opening program without jar executable
 After opening the repository, you have to run BasketballTeamRosterGUI.java file to run the program.
-Unless you have the .jar executable then you can just double click the file to run the program.
+
+### Opening program with Roster.jar
+
+find the Roster.jar file in the project root, and just double click the file to run the program.
