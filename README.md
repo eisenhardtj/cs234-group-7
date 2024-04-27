@@ -1,4 +1,4 @@
-# cs234-group-7
+# CS234-group-7
 Intro to Software Engineering Project 
 
 # Contributors
@@ -20,7 +20,7 @@ https://dev.mysql.com/doc/refman/8.3/en/macos-installation-pkg.html
 
 If you have HomeBrew installed you can paste the following command into your terminal:
 ```shell
-Brew install mysql
+brew install mysql
 ```
 
 ## Step 2
@@ -39,11 +39,11 @@ Once logged in you can now paste the following command in the terminal:
 ```sql
 CREATE USER 'project'@'localhost' IDENTIFIED BY 'project';
 ```
-then enter the following command:
+Then enter the following command:
 ```sql
 GRANT ALL PRIVILEGES ON *.* TO 'project'@'localhost' WITH GRANT OPTION;
 ```
-after you can enter quit into the terminal.
+After you can enter quit into the terminal.
 ```sql
 quit
 ```
@@ -65,8 +65,8 @@ You will be prompted to enter a password--enter 'project' case sensitive.
 ## Step 6
 
 ### Opening program without jar executable
-After opening the repository, you have to run BasketballTeamRosterGUI.java file to run the program.
+After opening the repository, Run the BasketballTeamRosterGUI.java file to run the program.
 
 ### Opening program with Roster.jar
 
-Find the Roster.jar file in the project root, and double click the file to run the program.
+Find the Roster.jar file in the project root, and double-click the file to run the program.
