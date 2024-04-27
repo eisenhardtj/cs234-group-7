@@ -75,5 +75,5 @@ If this doesn't work and you get an error--this is most likely due to a Java mis
 
 You can run the following command:
 ```
-java -jar Roster.jar
+java -jar BasketballRoster.jar
 ```
