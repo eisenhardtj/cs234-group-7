@@ -69,4 +69,9 @@ After opening the repository, Run the BasketballTeamRosterGUI.java file to run t
 
 ### Opening program with Roster.jar
 
-Find the Roster.jar file in the project root, and double-click the file to run the program.
+Find the BasketballRoster.jar file in the project root, and double-click the file to run the program.
+
+If the this doesnt work and you get a error this is most likely due to a java mismatch, the project jar was build using jdk 21.0.1.
+
+you can run the following command:
+`java -jar Roster.jar`
